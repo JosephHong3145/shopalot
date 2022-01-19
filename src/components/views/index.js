@@ -1,6 +1,5 @@
 export { LoginView } from "./authentication/LoginView";
 export { SignupView } from "./authentication/SignupView";
-export { VerificationView } from "./authentication/VerificationView";
 
 export { HomeView } from "./HomeView";
 export { ItemView } from "./ItemView";

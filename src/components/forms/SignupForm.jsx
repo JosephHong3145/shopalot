@@ -12,9 +12,9 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   createUserWithEmailAndPassword,
   getAuth,
-  sendEmailVerification,
+  updateProfile,
 } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import React from "react";
 
 import { Paths } from "../../paths";
@@ -27,21 +27,22 @@ export const SignupForm = () => {
   const auth = getAuth(app);
   const [isRegistering, setIsRegistering] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
+  const { state } = useLocation();
 
-  const onRegister = () => {
-    navigate(Paths.verify());
+  const onCreateUser = () => {
+    navigate(state?.path || Paths.home());
   };
 
   const onSubmit = (data) => {
     setIsRegistering(true);
     createUserWithEmailAndPassword(auth, data.email, data.password)
       .then((credentials) => {
-        sendEmailVerification(credentials.user);
-        onRegister();
+        updateProfile(credentials.user, { displayName: data.username }).then(
+          () => onCreateUser()
+        );
       })
       .catch((error) => {
         setIsRegistering(false);
-        console.log(error);
         if (error.code === "auth/invalid-email") {
           setError("email", {
             type: "invalidEmail",
@@ -66,16 +67,16 @@ export const SignupForm = () => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Controller
-        name="email"
+        name="username"
         control={control}
         defaultValue=""
         rules={{
-          required: "E-mail address required",
+          required: "Username required",
         }}
         render={({ field: { onChange, value }, fieldState: { error } }) => (
           <TextField
             fullWidth
-            label="E-mail"
+            label="Username"
             variant="outlined"
             value={value}
             error={!!error}
@@ -84,6 +85,27 @@ export const SignupForm = () => {
           />
         )}
       />
+      <Box mt={2}>
+        <Controller
+          name="email"
+          control={control}
+          defaultValue=""
+          rules={{
+            required: "E-mail address required",
+          }}
+          render={({ field: { onChange, value }, fieldState: { error } }) => (
+            <TextField
+              fullWidth
+              label="E-mail"
+              variant="outlined"
+              value={value}
+              error={!!error}
+              helperText={error ? error.message : null}
+              onChange={onChange}
+            />
+          )}
+        />
+      </Box>
       <Box mt={2}>
         <Controller
           name="password"
@@ -105,6 +127,7 @@ export const SignupForm = () => {
                       aria-label="toggle password visibility"
                       onClick={() => setShowPassword(!showPassword)}
                       edge="end"
+                      tabIndex={-1}
                     >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>

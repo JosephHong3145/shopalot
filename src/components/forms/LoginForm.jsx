@@ -21,26 +21,26 @@ export const LoginForm = () => {
   const { app } = useFirebase();
   const auth = getAuth(app);
 
-  const onLogin = (isVerified) => {
-    if (isVerified) {
-      navigate(state?.path || Paths.home());
-    } else {
-      navigate(Paths.verify());
-    }
+  const onLogin = (user) => {
+    navigate(state?.path || Paths.home());
   };
 
   const onSubmit = (data) => {
     setIsLoggingIn(true);
     signInWithEmailAndPassword(auth, data.email, data.password)
-      .then((credentials) => {
-        onLogin(credentials.user.isEmailVerified);
-      })
+      .then((credentials) => onLogin(credentials.user))
       .catch((error) => {
         setIsLoggingIn(false);
         if (error.code === "auth/invalid-email") {
           setError("email", {
             type: "invalidEmail",
             message: "E-mail address invalid",
+          });
+        } else if (error.code === "auth/too-many-requests") {
+          setError("email", {
+            type: "accountDisabled",
+            message:
+              "Account temporarily disabled due to failed login attempts. Try again later!",
           });
         } else {
           setError("email", {
@@ -111,7 +111,11 @@ export const LoginForm = () => {
       <Box display="flex" justifyContent="center" mt={2}>
         <Typography>
           {"Don't have an account? "}
-          <Link to={Paths.signup()} style={{ textDecoration: "none" }}>
+          <Link
+            to={Paths.signup()}
+            style={{ textDecoration: "none" }}
+            state={{ path: state?.path }}
+          >
             Signup here!
           </Link>
         </Typography>
