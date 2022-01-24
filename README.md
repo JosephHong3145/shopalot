@@ -10,13 +10,6 @@ An Amazon-inspired e-commerce platform created for Concordia's SOEN341 class and
 - Customers should have the ability to add products to a shopping card that is persistent across sessions
 ## Team
 - Abdelmalek Ihdene • AbdelmalekIhdene
-- Alexandra Zana • Alexicazana
-- Ali Alp Erdinc • AlpErdinc
-- Eve Gagnon • evgnon
-- Ru (Joseph) Hong • JosephHong3145
-- Ayman (Imaan) Mansoor • AymanMansoor
-- Armita Zand • Armia471
-- Jeff Zhang • JeffZhang852
 ## Getting Started
 1. Install NodeJS from https://nodejs.org/en/download/ using the (.msi) installer and restart your computer if needed.
 2. Test your installation with the following commands:
