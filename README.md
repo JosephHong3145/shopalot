@@ -1,5 +1,22 @@
 # Shopalot
-An Amazon-inspired e-commerce platform powered by React, MaterialUI and Firebase.
+## Description
+An Amazon-inspired e-commerce platform created for Concordia's SOEN341 class and powered by React, MaterialUI and Firebase 
+## Core Features
+- Users should be able to either be customers or vendors
+- Vendors should be able to publish their product on the platform and specify categories, prices, pictures and names for them
+- Customers should be able to look for a product based on a set of pre-defined categories, a search bar and/or a set of advanced filtering tools
+- Customers should be able to checkout, modify or cancel their orders successfully
+- Customers should be able to store personal information such as payment data and shipping address for future purchases
+- Customers should have the ability to add products to a shopping card that is persistent across sessions
+## Team
+- Abdelmalek Ihdene • AbdelmalekIhdene
+- Alexandra Zana • Alexicazana
+- Ali Alp Erdinc • AlpErdinc
+- Eve Gagnon • evgnon
+- Ru (Joseph) Hong • JosephHong3145
+- Ayman (Imaan) Mansoor • AymanMansoor
+- Armita Zand • Armia471
+- Jeff Zhang • JeffZhang852
 ## Getting Started
 1. Install NodeJS from https://nodejs.org/en/download/ using the (.msi) installer and restart your computer if needed.
 2. Test your installation with the following commands:
