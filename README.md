@@ -16,6 +16,7 @@ An Amazon-inspired e-commerce platform created for Concordia's SOEN341 class and
 - Eve Gagnon • Evgnon
 - Jeff Zhang • JeffZhang852
 - Armita Zand • Armia471
+- Ayman Mansoor • gigihuda2207
 ## Getting Started
 1. Install NodeJS from https://nodejs.org/en/download/ using the (.msi) installer and restart your computer if needed.
 2. Test your installation with the following commands:
