@@ -7,6 +7,7 @@ import {
 import React from "react";
 
 import {
+  CheckoutView,
   HomeView,
   ItemView,
   ItemsView,
@@ -48,6 +49,8 @@ export const Routes = () => {
       {/* Authentication */}
       <Route exact path={Paths.signup()} element={<SignupView />} />
       <Route exact path={Paths.login()} element={<LoginView />} />
+      {/* Payment Flow while Making it */}
+      <Route exact path={Paths.payment()} element={<CheckoutView />} />
       {/* Default */}
       <Route path="*" element={<NotFoundView />} />
     </Switch>
