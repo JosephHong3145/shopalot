@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const PaymentInfo = () => {
+export const ReviewItems = () => {
   return (
   <div>
       

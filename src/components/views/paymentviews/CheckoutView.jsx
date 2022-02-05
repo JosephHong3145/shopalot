@@ -1,23 +1,20 @@
 import { Grid } from "@mui/material";
 import React from "react";
 
+import { CheckoutContainer } from "../../payment/CheckoutContainer";
+
 export const CheckoutView = () => {
   return (
-    <div>
-      <Grid container spacing={2}>
-        <Grid item xs={8}>
-          <h1>xs=8</h1>
-        </Grid>
-        <Grid item xs={4}>
-          <h1>xs=4</h1>
-        </Grid>
-        <Grid item xs={4}>
-          <h1>xs=4</h1>
-        </Grid>
-        <Grid item xs={8}>
-          <h1>xs=8</h1>
-        </Grid>
+    <Grid
+      container
+      direction="row"
+      alignItems="center"
+      justifyContent="center"
+      style={{ minHeight: "50vh" }}
+    >
+      <Grid item xs={6}>
+        <CheckoutContainer />
       </Grid>
-    </div>
+    </Grid>
   );
 };
