@@ -1,5 +1,11 @@
-import React from "react";
+import OverallNavBar from "../navigation/Header";
+import React, { Component } from "react";
 
 export const HomeView = () => {
-  return <div>HomeView</div>;
+  return (
+    <div>
+      <OverallNavBar />
+      HomeView
+    </div>
+  );
 };
