@@ -7,6 +7,7 @@ import {
 import React from "react";
 
 import {
+  EditItemView,
   HomeView,
   ItemView,
   ItemsView,
@@ -45,6 +46,24 @@ export const Routes = () => {
       />
       <Route exact path={Paths.items()} element={<ItemsView />} />
       <Route exact path={Paths.item()} element={<ItemView />} />
+      <Route
+        exact
+        path={Paths.createItem()}
+        element={
+          <RequireAuth>
+            <EditItemView />
+          </RequireAuth>
+        }
+      />
+      <Route
+        exact
+        path={Paths.editItem()}
+        element={
+          <RequireAuth>
+            <EditItemView />
+          </RequireAuth>
+        }
+      />
       {/* Authentication */}
       <Route exact path={Paths.signup()} element={<SignupView />} />
       <Route exact path={Paths.login()} element={<LoginView />} />
