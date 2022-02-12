@@ -7,3 +7,4 @@ export { ItemsView } from "./ItemsView";
 export { MyProfileView } from "./MyProfileView";
 export { NotFoundView } from "./NotFoundView";
 export { ProfileView } from "./ProfileView";
+export { MyOrdersView } from "./MyOrdersView";

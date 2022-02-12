@@ -11,6 +11,7 @@ import {
   ItemView,
   ItemsView,
   LoginView,
+  MyOrdersView,
   MyProfileView,
   NotFoundView,
   ProfileView,
@@ -45,6 +46,7 @@ export const Routes = () => {
       />
       <Route exact path={Paths.items()} element={<ItemsView />} />
       <Route exact path={Paths.item()} element={<ItemView />} />
+      <Route exact path={Paths.myorders()} element={<MyOrdersView />} />
       {/* Authentication */}
       <Route exact path={Paths.signup()} element={<SignupView />} />
       <Route exact path={Paths.login()} element={<LoginView />} />
