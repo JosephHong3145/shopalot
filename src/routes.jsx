@@ -7,10 +7,12 @@ import {
 import React from "react";
 
 import {
+  CreateItemView,
   HomeView,
   ItemView,
   ItemsView,
   LoginView,
+  MyCartView,
   MyProfileView,
   NotFoundView,
   ProfileView,
@@ -43,8 +45,18 @@ export const Routes = () => {
           </RequireAuth>
         }
       />
+      <Route exact path={Paths.cartView()} element={<MyCartView />} />
       <Route exact path={Paths.items()} element={<ItemsView />} />
       <Route exact path={Paths.item()} element={<ItemView />} />
+      <Route
+        exact
+        path={Paths.createItem()}
+        element={
+          <RequireAuth>
+            <CreateItemView />
+          </RequireAuth>
+        }
+      />
       {/* Authentication */}
       <Route exact path={Paths.signup()} element={<SignupView />} />
       <Route exact path={Paths.login()} element={<LoginView />} />
