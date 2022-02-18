@@ -6,6 +6,8 @@ class Parts {
   static signup = "signup";
   static login = "login";
   static payment = "payment";
+  static createItem = "create-item";
+  static editItem = "edit-item";
 }
 
 export class Paths {
@@ -22,4 +24,6 @@ export class Paths {
   static login = () => `/${Parts.login}`;
 
   static payment = () => `/${Parts.payment}`;
+  static createItem = () => `/${Parts.createItem}`;
+  static editItem = (itemId) => `/${Parts.editITem}/${Paths.itemPath(itemId)}`;
 }

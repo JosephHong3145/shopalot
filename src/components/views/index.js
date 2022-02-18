@@ -7,5 +7,9 @@ export { ItemsView } from "./ItemsView";
 export { MyProfileView } from "./MyProfileView";
 export { NotFoundView } from "./NotFoundView";
 export { ProfileView } from "./ProfileView";
+<<<<<<< HEAD
 
 export { CheckoutView } from "./paymentviews/CheckoutView";
+=======
+export { EditItemView } from "./EditItemView";
+>>>>>>> master
