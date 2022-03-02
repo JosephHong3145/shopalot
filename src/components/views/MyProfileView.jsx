@@ -1,8 +1,23 @@
-import { Box, Button, Container, Grid, Paper, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  Grid,
+  Paper,
+  TextField,
+  Typography,
+} from "@mui/material";
+
+import FormControl from "@mui/material/FormControl";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormLabel from "@mui/material/FormLabel";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
 
 import { getAuth, signOut } from "firebase/auth";
 import React from "react";
 
+import { Controller, useForm } from "react-hook-form";
 import { useAuthState } from "../../contexts/AuthContext";
 import { useFirebase } from "../../contexts/FirebaseContext";
 
@@ -10,6 +25,8 @@ export const MyProfileView = () => {
   const { app } = useFirebase();
   const auth = getAuth(app);
   const { user } = useAuthState();
+  const [isEditMode, setIsEditMode] = React.useState(false);
+  const { handleSubmit, control, setError } = useForm();
 
   const placeholder = {
     imageURL:
@@ -25,12 +42,28 @@ export const MyProfileView = () => {
   };
 
   const editProfile = (event) => {
+    setIsEditMode(true);
+
     // eslint-disable-next-line no-console
-    console.log("Navigating to edit profile. ");
+    console.log("Edit mode: " + isEditMode);
+  };
+
+  const saveProfile = (event) => {
+    setIsEditMode(false);
+
+    // eslint-disable-next-line no-console
+    console.log("Edit mode: " + isEditMode);
+  };
+
+  const cancelSaveProfile = (event) => {
+    setIsEditMode(false);
+
+    // eslint-disable-next-line no-console
+    console.log("Edit mode: " + isEditMode);
   };
 
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth="md">
       <Box mt={4}>
         <Grid container spacing={2}>
           <Grid item xs={3}>
@@ -43,64 +76,220 @@ export const MyProfileView = () => {
           <Grid item xs={5}>
             <Paper variant="outlined" sx={{ height: 1 }}>
               <Box display="flex" flexdirection="column">
-                <Typography variant="h4">
-                  <b>{placeholder.userName}</b>
-                </Typography>
+                {isEditMode ? (
+                  <Controller
+                    name="userName"
+                    control={control}
+                    defaultValue=""
+                    rules={{
+                      required: "User name required. ",
+                    }}
+                    render={({
+                      field: { onChange, value },
+                      fieldState: { error },
+                    }) => (
+                      <TextField
+                        fullWidth
+                        label="Username"
+                        variant="outlined"
+                        value={value}
+                        error={!!error}
+                        helperText={error ? error.message : null}
+                        onChange={onChange}
+                      />
+                    )}
+                  />
+                ) : (
+                  <Typography variant="h4">
+                    <b>{placeholder.userName}</b>
+                  </Typography>
+                )}
               </Box>
               <Box align="bottom">
-                <Typography variant="h6">
-                  <b>{placeholder.userEntity}</b>
-                </Typography>
+                {isEditMode ? (
+                  <FormControl>
+                    <FormLabel id="UserType">User Type:</FormLabel>
+                    <RadioGroup
+                      row
+                      aria-labelledby="UserType"
+                      name="changeUserType"
+                    >
+                      <FormControlLabel
+                        value="User"
+                        control={<Radio />}
+                        label="User"
+                      />
+                      <FormControlLabel
+                        value="Company"
+                        control={<Radio />}
+                        label="Company"
+                      />
+                    </RadioGroup>
+                  </FormControl>
+                ) : (
+                  <Typography variant="h6">
+                    <b>{placeholder.userEntity}</b>
+                  </Typography>
+                )}
               </Box>
               <Box display="flex" flexdirection="column">
-                <Typography variant="h6">
-                  <b>Phone: </b>
-                </Typography>
-                <Typography variant="h6">
-                  <b>{placeholder.phone}</b>
-                </Typography>
+                {isEditMode ? (
+                  <Controller
+                    name="Phone number"
+                    control={control}
+                    defaultValue=""
+                    rules={{
+                      required: "Phone number required. ",
+                    }}
+                    render={({
+                      field: { onChange, value },
+                      fieldState: { error },
+                    }) => (
+                      <TextField
+                        fullWidth
+                        label="Phone"
+                        variant="outlined"
+                        value={value}
+                        error={!!error}
+                        helperText={error ? error.message : null}
+                        onChange={onChange}
+                      />
+                    )}
+                  />
+                ) : (
+                  <Typography variant="h6">
+                    <b>{placeholder.phone} </b>
+                  </Typography>
+                )}
               </Box>
               <Box display="flex" flexdirection="column">
-                <Typography variant="h6">
-                  <b>Email: </b>
-                </Typography>
-                <Typography variant="h6">
-                  <b>{placeholder.email}</b>
-                </Typography>
+                {isEditMode ? (
+                  <Controller
+                    name="Email"
+                    control={control}
+                    defaultValue=""
+                    rules={{
+                      required: " Email required. ",
+                    }}
+                    render={({
+                      field: { onChange, value },
+                      fieldState: { error },
+                    }) => (
+                      <TextField
+                        fullWidth
+                        label="Email"
+                        variant="outlined"
+                        value={value}
+                        error={!!error}
+                        helperText={error ? error.message : null}
+                        onChange={onChange}
+                      />
+                    )}
+                  />
+                ) : (
+                  <Typography variant="h6">
+                    <b>{placeholder.email} </b>
+                  </Typography>
+                )}
               </Box>
               <Box display="flex" flexdirection="column">
-                <Typography variant="h6">
-                  <b>Address: </b>
-                </Typography>
-                <Typography variant="h6">
-                  <b>{placeholder.location}</b>
-                </Typography>
+                {isEditMode ? (
+                  <Controller
+                    name="Address"
+                    control={control}
+                    defaultValue=""
+                    rules={{
+                      required: "Address required. ",
+                    }}
+                    render={({
+                      field: { onChange, value },
+                      fieldState: { error },
+                    }) => (
+                      <TextField
+                        fullWidth
+                        label="Address"
+                        variant="outlined"
+                        value={value}
+                        error={!!error}
+                        helperText={error ? error.message : null}
+                        onChange={onChange}
+                      />
+                    )}
+                  />
+                ) : (
+                  <Typography variant="h6">
+                    <b>{placeholder.address} </b>
+                  </Typography>
+                )}
               </Box>
-              <Box display="flex" flexdirection="column">
-                <Typography variant="h6">
-                  <b>Description: </b>
-                </Typography>
-              </Box>
-              <Box display="flex" flexdirection="column">
+              {isEditMode ? (
+                <Controller
+                  name="User description"
+                  control={control}
+                  defaultValue=""
+                  rules={{
+                    required: "User description required. ",
+                  }}
+                  render={({
+                    field: { onChange, value },
+                    fieldState: { error },
+                  }) => (
+                    <TextField
+                      fullWidth
+                      label="User description"
+                      variant="outlined"
+                      value={value}
+                      error={!!error}
+                      helperText={error ? error.message : null}
+                      onChange={onChange}
+                      multiline
+                      maxRows={10}
+                    />
+                  )}
+                />
+              ) : (
                 <Typography variant="body1">
-                  <b>{placeholder.userDescription}</b>
+                  <b>{placeholder.userDescription} </b>
                 </Typography>
-              </Box>
+              )}
             </Paper>
           </Grid>
-          <Grid item xs={2}></Grid>
-          <Grid item xs={2}>
-            <Button fullWidth variant="contained" onClick={editProfile}>
-              Edit Profile
-            </Button>
+          <Grid item xs={4}>
+            {isEditMode ? (
+              <Box>
+                <Box display="flex" flexdirection="column">
+                  <Button fullWidth variant="contained" onClick={saveProfile}>
+                    Save
+                  </Button>
+                </Box>
+                <Box display="flex" flexdirection="column">
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    color="error"
+                    onClick={cancelSaveProfile}
+                  >
+                    Cancel
+                  </Button>
+                </Box>
+              </Box>
+            ) : (
+              <Button fullWidth variant="contained" onClick={editProfile}>
+                Edit Profile
+              </Button>
+            )}
           </Grid>
         </Grid>
       </Box>
       <Box display="flex" flexdirection="column">
         <Grid item xs={2}>
-          <Button fullWidth variant="contained" onClick={editProfile}>
-            Add Item
-          </Button>
+          {isEditMode ? (
+            <Box></Box>
+          ) : (
+            <Button fullWidth variant="contained" onClick={editProfile}>
+              Add Item
+            </Button>
+          )}
         </Grid>
       </Box>
     </Container>
