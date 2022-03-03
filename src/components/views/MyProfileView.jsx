@@ -26,20 +26,26 @@ export const MyProfileView = () => {
   const auth = getAuth(app);
   const { user } = useAuthState();
   const [isEditMode, setIsEditMode] = React.useState(false);
-  const { handleSubmit, control, setError } = useForm();
+  const form = useForm({
+    mode: "all",
+    reValidateMode: "onChange",
+    defaultValues: {
+      imageURL:
+        "https://di2ponv0v5otw.cloudfront.net/posts/2018/07/10/5b45a8162140f3f8d4b2e9b2/m_5b45a818534ef923d7f95f2c.jpeg",
+      userDescription:
+        "The FitnessGram Pacer Test is a multistage aerobic capacity test that progressively gets more difficult as it continues. The 20 meter pacer test will begin in 30 seconds. Line up at the start. The running speed starts slowly but gets faster each minute after you hear this signal bodeboop. A sing lap should be completed every time you hear this sound. ding Remember to run in a straight line and run as long as possible. The second time you fail to complete a lap before the sound, your test is over. The test will begin on the word start. On your mark. Get ready!… Start. ding",
+      reputation: 5,
+      phone: "123-456-7890",
+      email: "john.doe@gmail.com",
+      address: "3145 Broadway blvd. ",
+      userEntity: "user",
+    },
+  });
 
-  const placeholder = {
-    imageURL:
-      "https://di2ponv0v5otw.cloudfront.net/posts/2018/07/10/5b45a8162140f3f8d4b2e9b2/m_5b45a818534ef923d7f95f2c.jpeg",
-    userName: user.displayName,
-    userDescription:
-      "The FitnessGram Pacer Test is a multistage aerobic capacity test that progressively gets more difficult as it continues. The 20 meter pacer test will begin in 30 seconds. Line up at the start. The running speed starts slowly but gets faster each minute after you hear this signal bodeboop. A sing lap should be completed every time you hear this sound. ding Remember to run in a straight line and run as long as possible. The second time you fail to complete a lap before the sound, your test is over. The test will begin on the word start. On your mark. Get ready!… Start. ding",
-    reputation: 5,
-    phone: "123-456-7890",
-    email: "john.doe@gmail.com",
-    location: "3145 Broadway blvd. ",
-    userEntity: "user",
-  };
+  // eslint-disable-next-line no-console
+  console.log(form);
+  const { handleSubmit, control, setError } = form;
+  console.log(control);
 
   const editProfile = (event) => {
     setIsEditMode(true);
@@ -67,169 +73,55 @@ export const MyProfileView = () => {
       <Box mt={4}>
         <Grid container spacing={2}>
           <Grid item xs={3}>
-            <Box
-              component="img"
-              sx={{ width: 1, borderRadius: 2 }}
-              src={placeholder.imageURL}
+            <Controller
+              name="imageURL"
+              render={({
+                field: { onChange, value },
+                fieldState: { error },
+              }) => (
+                <Box
+                  component="img"
+                  sx={{ width: 1, borderRadius: 2 }}
+                  src={value}
+                />
+              )}
             />
           </Grid>
           <Grid item xs={7}>
             <Paper variant="outlined" sx={{ height: 1 }}>
               <Box mt={1} mb={1} mr={1} ml={1}>
                 <Box mt={1} mb={1} display="flex" flexdirection="column">
-                  {isEditMode ? (
-                    <Controller
-                      name="userName"
-                      control={control}
-                      defaultValue=""
-                      rules={{
-                        required: "User name required. ",
-                      }}
-                      render={({
-                        field: { onChange, value },
-                        fieldState: { error },
-                      }) => (
-                        <TextField
-                          fullWidth
-                          label="Username"
-                          variant="outlined"
-                          value={value}
-                          error={!!error}
-                          helperText={error ? error.message : null}
-                          onChange={onChange}
-                        />
-                      )}
-                    />
-                  ) : (
-                    <Typography variant="h4">
-                      <b>{placeholder.userName}</b>
-                    </Typography>
-                  )}
+                  <Typography variant="h4">
+                    <b>{user.displayName}</b>
+                  </Typography>
                 </Box>
                 <Box mt={1} mb={1} align="bottom">
-                  {isEditMode ? (
-                    <FormControl>
-                      <FormLabel id="UserType">User Type:</FormLabel>
-                      <RadioGroup
-                        row
-                        aria-labelledby="UserType"
-                        name="changeUserType"
-                      >
-                        <FormControlLabel
-                          value="User"
-                          control={<Radio />}
-                          label="User"
-                        />
-                        <FormControlLabel
-                          value="Company"
-                          control={<Radio />}
-                          label="Company"
-                        />
-                      </RadioGroup>
-                    </FormControl>
-                  ) : (
-                    <Typography variant="h6">
-                      <b>{placeholder.userEntity}</b>
-                    </Typography>
-                  )}
+                  <FormControl>
+                    <FormLabel id="UserType">User Type:</FormLabel>
+                    <RadioGroup
+                      row
+                      aria-labelledby="UserType"
+                      name="changeUserType"
+                    >
+                      <FormControlLabel
+                        value="Vendor"
+                        control={<Radio />}
+                        label="Vendor"
+                      />
+                      <FormControlLabel
+                        value="Customer"
+                        control={<Radio />}
+                        label="Customer"
+                      />
+                    </RadioGroup>
+                  </FormControl>
                 </Box>
                 <Box mt={1} mb={1} display="flex" flexdirection="column">
-                  {isEditMode ? (
-                    <Controller
-                      name="Phone number"
-                      control={control}
-                      defaultValue=""
-                      rules={{
-                        required: "Phone number required. ",
-                      }}
-                      render={({
-                        field: { onChange, value },
-                        fieldState: { error },
-                      }) => (
-                        <TextField
-                          fullWidth
-                          label="Phone"
-                          variant="outlined"
-                          value={value}
-                          error={!!error}
-                          helperText={error ? error.message : null}
-                          onChange={onChange}
-                        />
-                      )}
-                    />
-                  ) : (
-                    <Typography variant="h6">
-                      <b>{placeholder.phone} </b>
-                    </Typography>
-                  )}
-                </Box>
-                <Box mt={1} mb={1} display="flex" flexdirection="column">
-                  {isEditMode ? (
-                    <Controller
-                      name="Email"
-                      control={control}
-                      defaultValue=""
-                      rules={{
-                        required: " Email required. ",
-                      }}
-                      render={({
-                        field: { onChange, value },
-                        fieldState: { error },
-                      }) => (
-                        <TextField
-                          fullWidth
-                          label="Email"
-                          variant="outlined"
-                          value={value}
-                          error={!!error}
-                          helperText={error ? error.message : null}
-                          onChange={onChange}
-                        />
-                      )}
-                    />
-                  ) : (
-                    <Typography variant="h6">
-                      <b>{placeholder.email} </b>
-                    </Typography>
-                  )}
-                </Box>
-                <Box mt={1} mb={1} display="flex" flexdirection="column">
-                  {isEditMode ? (
-                    <Controller
-                      name="Address"
-                      control={control}
-                      defaultValue=""
-                      rules={{
-                        required: "Address required. ",
-                      }}
-                      render={({
-                        field: { onChange, value },
-                        fieldState: { error },
-                      }) => (
-                        <TextField
-                          fullWidth
-                          label="Address"
-                          variant="outlined"
-                          value={value}
-                          error={!!error}
-                          helperText={error ? error.message : null}
-                          onChange={onChange}
-                        />
-                      )}
-                    />
-                  ) : (
-                    <Typography variant="h6">
-                      <b>{placeholder.address} </b>
-                    </Typography>
-                  )}
-                </Box>
-                {isEditMode ? (
                   <Controller
-                    name="User description"
+                    name="phone"
                     control={control}
-                    defaultValue=""
                     rules={{
-                      required: "User description required. ",
+                      required: "Phone number required. ",
                     }}
                     render={({
                       field: { onChange, value },
@@ -237,22 +129,89 @@ export const MyProfileView = () => {
                     }) => (
                       <TextField
                         fullWidth
-                        label="User description"
+                        label="Phone"
                         variant="outlined"
                         value={value}
                         error={!!error}
                         helperText={error ? error.message : null}
                         onChange={onChange}
-                        multiline
-                        maxRows={10}
+                        disabled={!isEditMode}
                       />
                     )}
                   />
-                ) : (
-                  <Typography variant="body1">
-                    <b>{placeholder.userDescription} </b>
-                  </Typography>
-                )}
+                </Box>
+                <Box mt={1} mb={1} display="flex" flexdirection="column">
+                  <Controller
+                    name="email"
+                    control={control}
+                    rules={{
+                      required: "Email required.",
+                    }}
+                    render={({
+                      field: { onChange, value },
+                      fieldState: { error },
+                    }) => (
+                      <TextField
+                        fullWidth
+                        label="Email"
+                        variant="outlined"
+                        value={value}
+                        error={!!error}
+                        helperText={error ? error.message : null}
+                        onChange={onChange}
+                        disabled={!isEditMode}
+                      />
+                    )}
+                  />
+                </Box>
+                <Box mt={1} mb={1} display="flex" flexdirection="column">
+                  <Controller
+                    name="address"
+                    control={control}
+                    rules={{
+                      required: "Address required. ",
+                    }}
+                    render={({
+                      field: { onChange, value },
+                      fieldState: { error },
+                    }) => (
+                      <TextField
+                        fullWidth
+                        label="Address"
+                        variant="outlined"
+                        value={value}
+                        error={!!error}
+                        helperText={error ? error.message : null}
+                        onChange={onChange}
+                        disabled={!isEditMode}
+                      />
+                    )}
+                  />
+                </Box>
+                <Controller
+                  name="userDescription"
+                  control={control}
+                  rules={{
+                    required: "User description required. ",
+                  }}
+                  render={({
+                    field: { onChange, value },
+                    fieldState: { error },
+                  }) => (
+                    <TextField
+                      fullWidth
+                      label="User description"
+                      variant="outlined"
+                      value={value}
+                      error={!!error}
+                      helperText={error ? error.message : null}
+                      onChange={onChange}
+                      multiline
+                      maxRows={10}
+                      disabled={!isEditMode}
+                    />
+                  )}
+                />
               </Box>
             </Paper>
           </Grid>
