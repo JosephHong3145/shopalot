@@ -58,7 +58,8 @@ const cartItem = {
       status: "In Stock",
       seller: "Nozama",
       shipping: "Free",
-      price: "$32.99",
+      price: "2.88",
+      quantity: "3",
     },
     {
       id: "2",
@@ -68,7 +69,8 @@ const cartItem = {
       status: "Out of Stock",
       seller: "Nozama",
       shipping: "Premium",
-      price: "$32.99",
+      price: "15.99",
+      quantity: "2",
     },
     {
       id: "3",
@@ -78,7 +80,8 @@ const cartItem = {
       status: "Out of Stock",
       seller: "Nozama",
       shipping: "Premium",
-      price: "$32.99",
+      price: "32.99",
+      quantity: "1",
     },
   ],
 };
@@ -113,8 +116,8 @@ export const MyCartView = () => {
                       <img
                         className="photo"
                         src={item.image}
-                        width="200"
-                        height="200"
+                        width="250"
+                        height="250"
                       />
                     </Box>
                     <Box>
@@ -131,8 +134,24 @@ export const MyCartView = () => {
                         Shipping Method: {item.shipping}
                       </Typography>
                       <Typography variant="body1" gutterBottom>
-                        Price: {item.price}
+                        Price: ${item.price}
                       </Typography>
+                      <Box mt={2}>
+                        <Grid container spacing={2} alignItems="center">
+                          <Grid item xs={6}>
+                            <TextField
+                              size="small"
+                              type="number"
+                              label="Quantity"
+                              InputProps={{ inputProps: { min: 1 } }}
+                              value={item.quantity}
+                            />
+                          </Grid>
+                          <Grid item xs={6}>
+                            <Button fullWidth>Delete Item</Button>
+                          </Grid>
+                        </Grid>
+                      </Box>
                     </Box>
                   </Box>
                 </Box>
@@ -142,7 +161,24 @@ export const MyCartView = () => {
         </Grid>
         <Grid item xs={3}>
           <Box component={Paper} variant="outlined" padding={2}>
-            {"Hello, World!"}
+            <Box mb={1}>
+              <Typography>
+                {"Subtotal (" +
+                  cartItem.items.length +
+                  " items): $" +
+                  cartItem.items
+                    .reduce(
+                      (partialSum, item) =>
+                        partialSum + Number(item.price) * Number(item.quantity),
+                      0
+                    )
+                    .toFixed(2)}
+              </Typography>
+            </Box>
+
+            <Button variant="contained" fullWidth>
+              Proceed to Checkout
+            </Button>
           </Box>
         </Grid>
       </Grid>
