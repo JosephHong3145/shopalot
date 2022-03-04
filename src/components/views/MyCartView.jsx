@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import {
   Avatar,
   Box,
@@ -71,6 +70,16 @@ const cartItem = {
       shipping: "Premium",
       price: "$32.99",
     },
+    {
+      id: "3",
+      name: "new name",
+      image:
+        "https://di2ponv0v5otw.cloudfront.net/posts/2018/07/10/5b45a8162140f3f8d4b2e9b2/m_5b45a818534ef923d7f95f2c.jpeg",
+      status: "Out of Stock",
+      seller: "Nozama",
+      shipping: "Premium",
+      price: "$32.99",
+    },
   ],
 };
 
@@ -84,52 +93,101 @@ const cartItem = {
 
 export const MyCartView = () => {
   return (
-    <Box pt={1}>
+    <Container size="md">
       <Typography variant="h2" gutterBottom component="div">
         Shopping Cart
       </Typography>
-      {cartItem.items.map((item) => {
-        return (
-          <Grid
-            container
-            rowSpacing={1}
-            columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-            key={item.id}
-            variant="outlined"
-            xs={6}
-            md={8}
-          >
-            <Grid xs={6} md={4}>
-              <img
-                className="photo"
-                src={item.image}
-                width="200"
-                height="200"
-              />
-            </Grid>
-            <Grid xs={3} md={8}>
-              <paper variant="outlined">
-                <Typography variant="h3" gutterBottom>
-                  {item.name}
-                </Typography>
-                <Typography variant="body1" gutterBottom>
-                  Status: {item.status}
-                </Typography>
-                <Typography variant="body1" gutterBottom>
-                  Seller: {item.seller}
-                </Typography>
-                <Typography variant="body1" gutterBottom>
-                  Shipping Method: {item.shipping}
-                </Typography>
-                <Typography variant="body1" gutterBottom>
-                  Price: {item.price}
-                </Typography>
-              </paper>
-            </Grid>
-          </Grid>
-        );
-      })}
-    </Box>
+      <Grid container spacing={2}>
+        <Grid item xs={9}>
+          <Box component={Paper} variant="outlined" padding={2}>
+            {cartItem.items.map((item, i) => {
+              return (
+                <Box key={item.id}>
+                  {i !== 0 && (
+                    <Box mt={1} mb={1}>
+                      <Divider />
+                    </Box>
+                  )}
+                  <Box display="flex">
+                    <Box mr={4}>
+                      <img
+                        className="photo"
+                        src={item.image}
+                        width="200"
+                        height="200"
+                      />
+                    </Box>
+                    <Box>
+                      <Typography variant="h3" gutterBottom>
+                        {item.name}
+                      </Typography>
+                      <Typography variant="body1" gutterBottom>
+                        Status: {item.status}
+                      </Typography>
+                      <Typography variant="body1" gutterBottom>
+                        Seller: {item.seller}
+                      </Typography>
+                      <Typography variant="body1" gutterBottom>
+                        Shipping Method: {item.shipping}
+                      </Typography>
+                      <Typography variant="body1" gutterBottom>
+                        Price: {item.price}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Box>
+              );
+            })}
+          </Box>
+        </Grid>
+        <Grid item xs={3}>
+          <Box component={Paper} variant="outlined" padding={2}>
+            {"Hello, World!"}
+          </Box>
+        </Grid>
+      </Grid>
+    </Container>
+
+    /*
+
+// <Grid
+          //   container
+          //   rowSpacing={1}
+          //   columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+          //   key={item.id}
+          //   variant="outlined"
+          //   xs={6}
+          //   md={8}
+          // >
+          //   <Grid xs={6} md={4}>
+          //     <img
+          //       className="photo"
+          //       src={item.image}
+          //       width="200"
+          //       height="200"
+          //     />
+          //   </Grid>
+          //   <Grid xs={3} md={8}>
+          //     <Paper variant="outlined">
+          //       <Typography variant="h3" gutterBottom>
+          //         {item.name}
+          //       </Typography>
+          //       <Typography variant="body1" gutterBottom>
+          //         Status: {item.status}
+          //       </Typography>
+          //       <Typography variant="body1" gutterBottom>
+          //         Seller: {item.seller}
+          //       </Typography>
+          //       <Typography variant="body1" gutterBottom>
+          //         Shipping Method: {item.shipping}
+          //       </Typography>
+          //       <Typography variant="body1" gutterBottom>
+          //         Price: {item.price}
+          //       </Typography>
+          //     </Paper>
+          //   </Grid>
+          // </Grid>
+*/
     // <Box pt={1}>
     //   {cartItem.items.map((item) => {
     //     return (
