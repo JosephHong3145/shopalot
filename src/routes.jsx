@@ -46,7 +46,15 @@ export const Routes = () => {
       />
       <Route exact path={Paths.items()} element={<ItemsView />} />
       <Route exact path={Paths.item()} element={<ItemView />} />
-      <Route exact path={Paths.orderConfirmation()} element={<RequireAuth><OrderConfirmationView /></RequireAuth>} />
+      <Route
+        exact
+        path={Paths.orderConfirmation()}
+        element={
+          <RequireAuth>
+            <OrderConfirmationView />
+          </RequireAuth>
+        }
+      />
       {/* Authentication */}
       <Route exact path={Paths.signup()} element={<SignupView />} />
       <Route exact path={Paths.login()} element={<LoginView />} />

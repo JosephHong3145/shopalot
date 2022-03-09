@@ -20,5 +20,5 @@ export class Paths {
   static itemPath = (itemId) => itemId ?? ":itemId";
   static signup = () => `/${Parts.signup}`;
   static login = () => `/${Parts.login}`;
-  static orderConfirmation = () => '/${Parts.orderConfirmation}';
+  static orderConfirmation = () => `/${Parts.orderConfirmation}`;
 }
