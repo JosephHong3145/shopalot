@@ -1,5 +1,10 @@
 import React from "react";
 
+import { Container, Typography } from "@mui/material";
+
 export const OrderConfirmationView = () => {
-  return <div>OrderConfirmationView</div>;
+  return;
+  <Container>
+    <Typography>OrderConfirmationView</Typography>
+  </Container>;
 };
