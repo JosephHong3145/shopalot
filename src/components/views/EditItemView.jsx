@@ -12,12 +12,15 @@ import {
   FormControlLabel,
   Grid,
   IconButton,
+  InputAdornment,
   InputLabel,
   List,
   ListItem,
   ListItemText,
   MenuItem,
+  OutlinedInput,
   Paper,
+  Radio,
   Select,
   Table,
   TableBody,
@@ -187,6 +190,68 @@ export const AddCategoryDialog = (props) => {
         <Button onClick={onAddCategory}>{"Add Category"}</Button>
       </DialogActions>
     </Dialog>
+  );
+};
+
+export const CombinationList = ({ filters }) => {
+  const combinations = filters[0].options
+    .map((x) => filters[1]?.options.map((y) => [x, y]) || [[x]])
+    .flat();
+  return (
+    <Paper variant="outlined">
+      {combinations.map((combination) => (
+        <Box
+          key={[
+            "combination",
+            ...combination.map((filter) => "-" + filter),
+          ].join()}
+        >
+          <Box display="flex" p={1} justifyContent="space-between">
+            <Box display="flex" alignItems="center">
+              <Radio checked={true} />
+              <Box ml={2} mr={2}>
+                <Typography>
+                  <b>{filters[0].name + ": "}</b>
+                  {combination[0]}
+                </Typography>
+              </Box>
+              {filters.length > 1 && (
+                <>
+                  <Divider orientation="vertical" sx={{ height: 50 }} />
+                  <Box ml={2}>
+                    <Typography>
+                      <b>{filters[1].name + ": "}</b>
+                      {combination[1]}
+                    </Typography>
+                  </Box>
+                </>
+              )}
+            </Box>
+            <Box display="flex">
+              <Box mr={1}>
+                <TextField
+                  margin="dense"
+                  sx={{ width: 160 }}
+                  type="number"
+                  label="Stock"
+                />
+              </Box>
+              <TextField
+                sx={{ width: 160 }}
+                margin="dense"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">$</InputAdornment>
+                  ),
+                }}
+                label="Price"
+              />
+            </Box>
+          </Box>
+          <Divider />
+        </Box>
+      ))}
+    </Paper>
   );
 };
 
@@ -394,6 +459,11 @@ export const EditItemView = () => {
                 </Button>
               </Grid>
             </Grid>
+          </Box>
+          <Box pt={2} pb={2}>
+            {categories[0].filters.length !== 0 && (
+              <CombinationList filters={categories[0].filters} />
+            )}
           </Box>
         </Container>
         <AddCategoryDialog
