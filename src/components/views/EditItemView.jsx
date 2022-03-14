@@ -31,6 +31,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Condition } from "../../constants";
+import { Controller, useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import ClearIcon from "@mui/icons-material/Clear";
 import React from "react";
@@ -193,64 +194,83 @@ export const AddCategoryDialog = (props) => {
   );
 };
 
-export const CombinationList = ({ filters }) => {
+export const CombinationList = ({
+  filters,
+  value: _combinations,
+  onChange,
+}) => {
+  console.log(filters);
   const combinations = filters[0].options
     .map((x) => filters[1]?.options.map((y) => [x, y]) || [[x]])
     .flat();
   return (
     <Paper variant="outlined">
-      {combinations.map((combination) => (
-        <Box
-          key={[
-            "combination",
-            ...combination.map((filter) => "-" + filter),
-          ].join()}
-        >
-          <Box display="flex" p={1} justifyContent="space-between">
-            <Box display="flex" alignItems="center">
-              <Radio checked={true} />
-              <Box ml={2} mr={2}>
-                <Typography>
-                  <b>{filters[0].name + ": "}</b>
-                  {combination[0]}
-                </Typography>
+      {combinations.map((combination) => {
+        const i = _combinations.findIndex(
+          (v) => v.filters.map((filter) => filter.name) === combination
+        );
+        const _combination = _combinations.at(i);
+        const { stock, price } = _combination ?? { stock: 0, price: 0 };
+        const combinationExists = !!_combination;
+
+        return (
+          <Box
+            key={[
+              "combination",
+              ...combination.map((filter) => "-" + filter),
+            ].join()}
+          >
+            <Box display="flex" p={1} justifyContent="space-between">
+              <Box display="flex" alignItems="center">
+                <Radio checked={combinationExists} />
+                <Box ml={2} mr={2}>
+                  <Typography>
+                    <b>{filters[0].name + ": "}</b>
+                    {combination[0]}
+                  </Typography>
+                </Box>
+                {filters.length > 1 && (
+                  <>
+                    <Divider orientation="vertical" sx={{ height: 50 }} />
+                    <Box ml={2}>
+                      <Typography>
+                        <b>{filters[1].name + ": "}</b>
+                        {combination[1]}
+                      </Typography>
+                    </Box>
+                  </>
+                )}
               </Box>
-              {filters.length > 1 && (
-                <>
-                  <Divider orientation="vertical" sx={{ height: 50 }} />
-                  <Box ml={2}>
-                    <Typography>
-                      <b>{filters[1].name + ": "}</b>
-                      {combination[1]}
-                    </Typography>
-                  </Box>
-                </>
-              )}
-            </Box>
-            <Box display="flex">
-              <Box mr={1}>
+              <Box display="flex">
+                <Box mr={1}>
+                  <TextField
+                    margin="dense"
+                    sx={{ width: 160 }}
+                    InputProps={{ inputProps: { min: 1 } }}
+                    type="number"
+                    label="Stock"
+                    disabled={!combinationExists}
+                    value={stock}
+                  />
+                </Box>
                 <TextField
-                  margin="dense"
                   sx={{ width: 160 }}
-                  type="number"
-                  label="Stock"
+                  margin="dense"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">$</InputAdornment>
+                    ),
+                  }}
+                  disabled={!combinationExists}
+                  value={price}
+                  label="Price"
                 />
               </Box>
-              <TextField
-                sx={{ width: 160 }}
-                margin="dense"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">$</InputAdornment>
-                  ),
-                }}
-                label="Price"
-              />
             </Box>
+            <Divider />
           </Box>
-          <Divider />
-        </Box>
-      ))}
+        );
+      })}
     </Paper>
   );
 };
@@ -337,9 +357,39 @@ export const EditItemView = () => {
   const isNewItem = !itemId;
   const conditionKeys = Object.keys(Condition);
   const [specifications, setSpecifications] = React.useState([]);
-  const [imageName, setImageName] = React.useState("");
   const [addCategoryDialogOpen, setAddCategoryDialogOpen] =
     React.useState(false);
+  const { control, handleSubmit, reset, watch } = useForm({
+    defaultValues: {
+      itemName: "",
+      condition: Condition.Mint.name,
+      refundPolicy: "",
+      orderProcessingDelay: 0,
+      description: "",
+      image: {
+        name: "",
+        URL: "",
+      },
+      productSpecifications: [],
+      category: {
+        name: "None",
+        filters: [],
+      },
+      filterCombinations: [],
+    },
+  });
+  const currentCategory = watch("category");
+  const onSubmit = () => {};
+  const onImageChange = (image, onChange) => {
+    onChange(image);
+  };
+  const onCategoryChange = (name, onChange) => {
+    let newCategory = { name, filters: [] };
+    if (name !== "None") {
+      newCategory = categories.find((category) => category.name === name);
+    }
+    onChange(newCategory);
+  };
   return (
     <Box>
       <Box mt={3}>
@@ -348,123 +398,221 @@ export const EditItemView = () => {
             {isNewItem ? "Create New Item" : "Edit Item"}
           </Typography>
           <Divider />
-          <Box mt={2}>
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <TextField fullWidth label="Item Name" variant="outlined" />
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Box mt={2}>
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <Controller
+                    name="itemName"
+                    control={control}
+                    render={({ field: { onChange, value } }) => (
+                      <TextField
+                        fullWidth
+                        label="Item Name"
+                        variant="outlined"
+                        value={value}
+                        onChange={onChange}
+                      />
+                    )}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <FormControl variant="outlined" fullWidth>
+                    <InputLabel id="condition-select-label">
+                      {"Condition"}
+                    </InputLabel>
+                    <Controller
+                      name="condition"
+                      control={control}
+                      render={({ field: { onChange, value } }) => (
+                        <Select
+                          labelId="condition-select-label"
+                          label="Condition"
+                          onChange={onChange}
+                          value={value}
+                        >
+                          {Object.values(Condition).map((condition, i) => (
+                            <MenuItem
+                              key={"condition-select-" + conditionKeys[i]}
+                              value={condition.name}
+                            >
+                              {condition.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      )}
+                    />
+                  </FormControl>
+                </Grid>
               </Grid>
-              <Grid item xs={6}>
-                <FormControl variant="outlined" fullWidth>
-                  <InputLabel id="condition-select-label">
-                    {"Condition"}
-                  </InputLabel>
-                  <Select labelId="condition-select-label" label="Condition">
-                    {Object.values(Condition).map((condition, i) => (
-                      <MenuItem
-                        key={"condition-select-" + conditionKeys[i]}
-                        value={condition.name}
-                      >
-                        {condition.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-            </Grid>
-          </Box>
-          <Box mt={2}>
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <TextField fullWidth label="Refund Policy" variant="outlined" />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  label="Order Processing Delay (Days)"
-                  variant="outlined"
-                  type="number"
-                  InputProps={{ inputProps: { min: 0 } }}
-                />
-              </Grid>
-            </Grid>
-          </Box>
-          <Box mt={2}>
-            <TextField label="Description" multiline rows={8} fullWidth />
-          </Box>
-          <Box mt={2} display="flex" alignItems="center">
-            <input
-              accept="image/*"
-              hidden
-              id="raised-button-file"
-              multiple
-              type="file"
-              onChange={(event) => setImageName(event.target.files[0].name)}
-            />
-            <label htmlFor="raised-button-file">
-              <Button
-                variant="contained"
-                component="span"
-                sx={{ minWidth: 220, height: 50 }}
-              >
-                Choose Image
-              </Button>
-            </label>
-            <Box ml={2}>
-              <Typography
-                color={imageName === "" ? "textSecondary" : "textPrimary"}
-              >
-                {imageName === "" ? "No Image Was Selected" : imageName}
-              </Typography>
             </Box>
-          </Box>
-          <Box mt={2}>
-            <Divider />
-          </Box>
-          <Box mt={2}>
-            <SpecificationsTable
-              value={specifications}
-              onChange={(specifications) => setSpecifications(specifications)}
+            <Box mt={2}>
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <Controller
+                    name="refundPolicy"
+                    control={control}
+                    render={({ field: { onChange, value } }) => (
+                      <TextField
+                        fullWidth
+                        label="Refund Policy"
+                        variant="outlined"
+                        onChange={onChange}
+                        value={value}
+                      />
+                    )}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <Controller
+                    name="orderProcessingDelay"
+                    control={control}
+                    render={({ field: { onChange, value } }) => (
+                      <TextField
+                        fullWidth
+                        label="Order Processing Delay (Days)"
+                        variant="outlined"
+                        type="number"
+                        InputProps={{ inputProps: { min: 0 } }}
+                        onChange={onChange}
+                        value={value}
+                      />
+                    )}
+                  />
+                </Grid>
+              </Grid>
+            </Box>
+            <Box mt={2}>
+              <Controller
+                name="description"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <TextField
+                    label="Description"
+                    multiline
+                    rows={8}
+                    fullWidth
+                    value={value}
+                    onChange={onChange}
+                  />
+                )}
+              />
+            </Box>
+            <Controller
+              name="image"
+              control={control}
+              render={({ field: { onChange, value: image } }) => (
+                <Box mt={2} display="flex" alignItems="center">
+                  <input
+                    accept="image/*"
+                    hidden
+                    id="raised-button-file"
+                    multiple
+                    type="file"
+                    onChange={(event) =>
+                      onImageChange(
+                        { name: event.target.files[0].name },
+                        onChange
+                      )
+                    }
+                  />
+                  <label htmlFor="raised-button-file">
+                    <Button
+                      variant="contained"
+                      component="span"
+                      sx={{ minWidth: 220, height: 50 }}
+                    >
+                      Choose Image
+                    </Button>
+                  </label>
+                  <Box ml={2}>
+                    <Typography
+                      color={
+                        image.name === "" ? "textSecondary" : "textPrimary"
+                      }
+                    >
+                      {image.name === "" ? "No Image Was Selected" : image.name}
+                    </Typography>
+                  </Box>
+                </Box>
+              )}
             />
-          </Box>
-          <Box mt={2}>
-            <Divider />
-          </Box>
-          <Box mt={2}>
-            <Grid container spacing={2}>
-              <Grid item xs={8}>
-                <FormControl variant="outlined" fullWidth>
-                  <InputLabel id="category-select-label">
-                    {"Category"}
-                  </InputLabel>
-                  <Select labelId="category-select-label" label="Category">
-                    {Object.values(categories).map((category, i) => (
-                      <MenuItem
-                        key={"condition-select-" + category.name}
-                        value={i}
-                      >
-                        {category.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+            <Box mt={2}>
+              <Divider />
+            </Box>
+            <Box mt={2}>
+              <Controller
+                name="productSpecifications"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <SpecificationsTable value={value} onChange={onChange} />
+                )}
+              />
+            </Box>
+            <Box mt={2}>
+              <Divider />
+            </Box>
+            <Box mt={2}>
+              <Grid container spacing={2}>
+                <Grid item xs={8}>
+                  <FormControl variant="outlined" fullWidth>
+                    <InputLabel id="category-select-label">
+                      {"Category"}
+                    </InputLabel>
+                    <Controller
+                      name="category"
+                      control={control}
+                      render={({ field: { onChange, value: _category } }) => (
+                        <Select
+                          labelId="category-select-label"
+                          label="Category"
+                          value={_category?.name}
+                          onChange={(event) =>
+                            onCategoryChange(event.target.value, onChange)
+                          }
+                        >
+                          <MenuItem value={"None"}>{"None"}</MenuItem>
+                          {Object.values(categories).map((category, i) => (
+                            <MenuItem
+                              key={"condition-select-" + category.name}
+                              value={category.name}
+                            >
+                              {category.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      )}
+                    />
+                  </FormControl>
+                </Grid>
+                <Grid item xs={4}>
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    sx={{ height: 1 }}
+                    onClick={() => setAddCategoryDialogOpen(true)}
+                  >
+                    Add New Category
+                  </Button>
+                </Grid>
               </Grid>
-              <Grid item xs={4}>
-                <Button
-                  variant="contained"
-                  fullWidth
-                  sx={{ height: 1 }}
-                  onClick={() => setAddCategoryDialogOpen(true)}
-                >
-                  Add New Category
-                </Button>
-              </Grid>
-            </Grid>
-          </Box>
-          <Box pt={2} pb={2}>
-            {categories[0].filters.length !== 0 && (
-              <CombinationList filters={categories[0].filters} />
-            )}
-          </Box>
+            </Box>
+            <Box pt={2} pb={2}>
+              {currentCategory?.filters.length !== 0 && (
+                <Controller
+                  name="filterCombinations"
+                  control={control}
+                  render={({ field: { onChange, value } }) => (
+                    <CombinationList
+                      filters={currentCategory?.filters}
+                      onChange={onChange}
+                      value={value}
+                    />
+                  )}
+                />
+              )}
+            </Box>
+          </form>
         </Container>
         <AddCategoryDialog
           open={addCategoryDialogOpen}
