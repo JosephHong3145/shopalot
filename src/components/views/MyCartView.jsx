@@ -26,6 +26,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { collection, deleteDoc, doc, setDoc } from "firebase/firestore";
+import { useFirebase } from "../../contexts/FirebaseContext";
 import { useParams } from "react-router-dom";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -35,66 +37,66 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import LockIcon from "@mui/icons-material/Lock";
 import React from "react";
-// import styled from "@mui/material/styles";
 
-const placeholder = {
-  imageURL:
-    "https://di2ponv0v5otw.cloudfront.net/posts/2018/07/10/5b45a8162140f3f8d4b2e9b2/m_5b45a818534ef923d7f95f2c.jpeg",
-  itemName: "Adidas Grand Court Sneakers",
-  price: "$53.00 CAD",
-  size: "12",
-  color: "White",
-  refundPolicy: "30 days refund",
-  orderProcessingDelay: 3,
-};
+import { useCollection } from "react-firebase-hooks/firestore";
 
-const cartItem = {
-  items: [
-    {
-      id: "1",
-      name: "Adidas shoes",
-      image:
-        "https://di2ponv0v5otw.cloudfront.net/posts/2018/07/10/5b45a8162140f3f8d4b2e9b2/m_5b45a818534ef923d7f95f2c.jpeg",
-      status: "In Stock",
-      seller: "Nozama",
-      shipping: "Free",
-      price: "2.88",
-      quantity: "3",
-    },
-    {
-      id: "2",
-      name: "Jordan",
-      image:
-        "https://di2ponv0v5otw.cloudfront.net/posts/2018/07/10/5b45a8162140f3f8d4b2e9b2/m_5b45a818534ef923d7f95f2c.jpeg",
-      status: "Out of Stock",
-      seller: "Nozama",
-      shipping: "Premium",
-      price: "15.99",
-      quantity: "2",
-    },
-    {
-      id: "3",
-      name: "new name",
-      image:
-        "https://di2ponv0v5otw.cloudfront.net/posts/2018/07/10/5b45a8162140f3f8d4b2e9b2/m_5b45a818534ef923d7f95f2c.jpeg",
-      status: "Out of Stock",
-      seller: "Nozama",
-      shipping: "Premium",
-      price: "32.99",
-      quantity: "1",
-    },
-  ],
-};
+// const placeholder = {
+//   imageURL:
+//     "https://di2ponv0v5otw.cloudfront.net/posts/2018/07/10/5b45a8162140f3f8d4b2e9b2/m_5b45a818534ef923d7f95f2c.jpeg",
+//   itemName: "Adidas Grand Court Sneakers",
+//   price: "$53.00 CAD",
+//   size: "12",
+//   color: "White",
+//   refundPolicy: "30 days refund",
+//   orderProcessingDelay: 3,
+// };
 
-// const itemStyle = styled(Paper)(({ theme }) => ({
-//   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-//   ...theme.typography.body2,
-//   padding: theme.spacing(1),
-//   textAlign: "center",
-//   color: theme.palette.text.secondary
-// }));
+// const cartItem = {
+//   items: [
+//     {
+//       id: "1",
+//       name: "Adidas shoes",
+//       image:
+//         "https://di2ponv0v5otw.cloudfront.net/posts/2018/07/10/5b45a8162140f3f8d4b2e9b2/m_5b45a818534ef923d7f95f2c.jpeg",
+//       status: "In Stock",
+//       seller: "Nozama",
+//       shipping: "2 days shipping",
+//       price: "2.88",
+//       quantity: "3",
+//     },
+//     {
+//       id: "2",
+//       name: "Jordan",
+//       image:
+//         "https://di2ponv0v5otw.cloudfront.net/posts/2018/07/10/5b45a8162140f3f8d4b2e9b2/m_5b45a818534ef923d7f95f2c.jpeg",
+//       status: "Out of Stock",
+//       seller: "Nozama",
+//       shipping: "Premium",
+//       price: "15.99",
+//       quantity: "2",
+//     },
+//     {
+//       id: "3",
+//       name: "new name",
+//       image:
+//         "https://di2ponv0v5otw.cloudfront.net/posts/2018/07/10/5b45a8162140f3f8d4b2e9b2/m_5b45a818534ef923d7f95f2c.jpeg",
+//       status: "Out of Stock",
+//       seller: "Nozama",
+//       shipping: "Premium",
+//       price: "32.99",
+//       quantity: "1",
+//     },
+//   ],
+// };
 
 export const MyCartView = () => {
+  const { firestore: db } = useFirebase();
+  const [value] = useCollection(collection(db, "cart"));
+  const items =
+    value?.docs.map((doc) => {
+      return { ...doc.data(), id: doc.id };
+    }) ?? [];
+  console.log(items);
   return (
     <Container size="md">
       <Typography variant="h2" gutterBottom component="div">
@@ -103,7 +105,7 @@ export const MyCartView = () => {
       <Grid container spacing={2}>
         <Grid item xs={9}>
           <Box component={Paper} variant="outlined" padding={2}>
-            {cartItem.items.map((item, i) => {
+            {items.map((item, i) => {
               return (
                 <Box key={item.id}>
                   {i !== 0 && (
@@ -115,28 +117,39 @@ export const MyCartView = () => {
                     <Box mr={4}>
                       <img
                         className="photo"
-                        src={item.image}
-                        width="250"
-                        height="250"
+                        src={item.imageURL}
+                        width="220"
+                        height="220"
+                        style={{
+                          objectFit: "contain",
+                        }}
                       />
                     </Box>
-                    <Box>
-                      <Typography variant="h3" gutterBottom>
-                        {item.name}
-                      </Typography>
-                      <Typography variant="body1" gutterBottom>
-                        Status: {item.status}
-                      </Typography>
-                      <Typography variant="body1" gutterBottom>
-                        Seller: {item.seller}
-                      </Typography>
-                      <Typography variant="body1" gutterBottom>
-                        Shipping Method: {item.shipping}
-                      </Typography>
-                      <Typography variant="body1" gutterBottom>
-                        Price: ${item.price}
-                      </Typography>
-                      <Box mt={2}>
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      justifyContent="space-between"
+                    >
+                      <Box>
+                        <Typography variant="h5" gutterBottom>
+                          {item.name}
+                        </Typography>
+                        <Typography variant="body1" gutterBottom>
+                          Seller: {item.seller}
+                        </Typography>
+                        <Typography variant="body1" gutterBottom>
+                          Price: ${item.price}
+                        </Typography>
+                        {item.filters.map((filter) => (
+                          <Typography
+                            key={item.id + "-" + filter.name}
+                            gutterBottom
+                          >
+                            {filter.name + ": " + filter.value}
+                          </Typography>
+                        ))}
+                      </Box>
+                      <Box mb={1}>
                         <Grid container spacing={2} alignItems="center">
                           <Grid item xs={6}>
                             <TextField
@@ -145,10 +158,23 @@ export const MyCartView = () => {
                               label="Quantity"
                               InputProps={{ inputProps: { min: 1 } }}
                               value={item.quantity}
+                              onChange={(event) => {
+                                const newItem = { ...item };
+                                delete newItem.id;
+                                newItem.quantity = Number(event.target.value);
+                                setDoc(doc(db, "cart", item.id), newItem);
+                              }}
                             />
                           </Grid>
                           <Grid item xs={6}>
-                            <Button fullWidth>Delete Item</Button>
+                            <Button
+                              fullWidth
+                              onClick={(event) => {
+                                deleteDoc(doc(db, "cart", item.id));
+                              }}
+                            >
+                              Delete Item
+                            </Button>
                           </Grid>
                         </Grid>
                       </Box>
@@ -164,9 +190,9 @@ export const MyCartView = () => {
             <Box mb={1}>
               <Typography>
                 {"Subtotal (" +
-                  cartItem.items.length +
+                  items.length +
                   " items): $" +
-                  cartItem.items
+                  items
                     .reduce(
                       (partialSum, item) =>
                         partialSum + Number(item.price) * Number(item.quantity),
@@ -183,70 +209,5 @@ export const MyCartView = () => {
         </Grid>
       </Grid>
     </Container>
-
-    /*
-
-// <Grid
-          //   container
-          //   rowSpacing={1}
-          //   columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-          //   key={item.id}
-          //   variant="outlined"
-          //   xs={6}
-          //   md={8}
-          // >
-          //   <Grid xs={6} md={4}>
-          //     <img
-          //       className="photo"
-          //       src={item.image}
-          //       width="200"
-          //       height="200"
-          //     />
-          //   </Grid>
-          //   <Grid xs={3} md={8}>
-          //     <Paper variant="outlined">
-          //       <Typography variant="h3" gutterBottom>
-          //         {item.name}
-          //       </Typography>
-          //       <Typography variant="body1" gutterBottom>
-          //         Status: {item.status}
-          //       </Typography>
-          //       <Typography variant="body1" gutterBottom>
-          //         Seller: {item.seller}
-          //       </Typography>
-          //       <Typography variant="body1" gutterBottom>
-          //         Shipping Method: {item.shipping}
-          //       </Typography>
-          //       <Typography variant="body1" gutterBottom>
-          //         Price: {item.price}
-          //       </Typography>
-          //     </Paper>
-          //   </Grid>
-          // </Grid>
-*/
-    // <Box pt={1}>
-    //   {cartItem.items.map((item) => {
-    //     return (
-    //       <Box mt={2} key={"item-" + item.id}>
-    //         <Card sx={{ width: 1 }} variant="outlined">
-    //           <CardHeader title={item.name} />
-    //           <CardMedia
-    //             component="img"
-    //             sx={{ width: 500, borderRadius: 2 }}
-    //             src={item.image}
-    //           />
-    //           <CardContent>
-    //             <Typography variant="body2" color="text.secondary">
-    //               <b>{"Status: " + item.status}</b>
-    //               <b>{"Seller: " + item.seller}</b>
-    //               <b>{"Shipping Method: " + item.shipping}</b>
-    //               <b>{"Price: " + item.price}</b>
-    //             </Typography>
-    //           </CardContent>
-    //         </Card>
-    //       </Box>
-    //     );
-    //   })}
-    // </Box>
   );
 };
