@@ -423,7 +423,6 @@ export const EditItemView = () => {
       category: data.category.name,
       seller: user.displayName,
     };
-    console.log(newData);
     const docRef = await addDoc(collection(db, "items"), newData);
     navigate(`/items/${docRef.id}`);
   };
