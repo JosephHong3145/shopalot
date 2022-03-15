@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Checkbox,
+  CircularProgress,
   Container,
   Dialog,
   DialogActions,
@@ -18,10 +19,11 @@ import {
   ListItem,
   ListItemText,
   MenuItem,
-  OutlinedInput,
   Paper,
   Radio,
   Select,
+  Slide,
+  Snackbar,
   Table,
   TableBody,
   TableCell,
@@ -32,25 +34,15 @@ import {
 } from "@mui/material";
 import { Condition } from "../../constants";
 import { Controller, useForm } from "react-hook-form";
-import { useParams } from "react-router-dom";
+import { addDoc, collection } from "firebase/firestore";
+import { ref, uploadBytes } from "firebase/storage";
+import { useAuthState } from "../../contexts/AuthContext";
+import { useCollection } from "react-firebase-hooks/firestore";
+import { useFirebase } from "../../contexts/FirebaseContext";
+import { useNavigate, useParams } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 import ClearIcon from "@mui/icons-material/Clear";
 import React from "react";
-
-const categories = [
-  {
-    name: "Men's Shoes",
-    filters: [
-      {
-        name: "Size",
-        options: ["7", "8", "9", "10", "11", "12"],
-      },
-      {
-        name: "Color",
-        options: ["Green", "Blue", "Black", "Yellow"],
-      },
-    ],
-  },
-];
 
 export const FilterList = (props) => {
   const { label, name, options, onNameChange, onOptionsChange } = props;
@@ -118,15 +110,30 @@ export const FilterList = (props) => {
 
 export const AddCategoryDialog = (props) => {
   const { open, onClose, onAddCategory } = props;
+  const [categoryName, setCategoryName] = React.useState([""]);
   const [filtersEnabled, setFiltersEnabled] = React.useState([false, false]);
   const [filtersNames, setFiltersNames] = React.useState(["", ""]);
   const [filtersOptions, setFiltersOptions] = React.useState([[], []]);
+  const category = {
+    name: categoryName,
+    filters: filtersEnabled
+      .map(
+        (enabled, i) =>
+          enabled && { name: filtersNames[i], options: filtersOptions[i] }
+      )
+      .filter((x) => x !== false),
+  };
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>{"Add New Category"}</DialogTitle>
       <DialogContent sx={{ minWidth: 380 }}>
         <Box mt={1} pr={1}>
-          <TextField fullWidth label="Category Name" />
+          <TextField
+            fullWidth
+            label="Category Name"
+            value={categoryName}
+            onChange={(event) => setCategoryName(event.target.value)}
+          />
           <FormControl>
             <FormControlLabel
               control={
@@ -188,45 +195,61 @@ export const AddCategoryDialog = (props) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>{"Cancel"}</Button>
-        <Button onClick={onAddCategory}>{"Add Category"}</Button>
+        <Button onClick={() => onAddCategory(category)}>
+          {"Add Category"}
+        </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export const CombinationList = ({
-  filters,
-  value: _combinations,
-  onChange,
-}) => {
-  console.log(filters);
-  const combinations = filters[0].options
+export const CombinationList = ({ filters, value: combinations, onChange }) => {
+  const filterCombinations = filters[0].options
     .map((x) => filters[1]?.options.map((y) => [x, y]) || [[x]])
     .flat();
   return (
     <Paper variant="outlined">
-      {combinations.map((combination) => {
-        const i = _combinations.findIndex(
-          (v) => v.filters.map((filter) => filter.name) === combination
-        );
-        const _combination = _combinations.at(i);
-        const { stock, price } = _combination ?? { stock: 0, price: 0 };
-        const combinationExists = !!_combination;
+      {filterCombinations.map((filterCombination) => {
+        const i = combinations.findIndex((v) => {
+          return v.filters.every(
+            (filter, i) => filter === filterCombination[i]
+          );
+        });
+        const combination =
+          i !== -1 ? combinations.at(i) : { stock: 0, price: 0 };
+        const { stock, price } = combination;
+        const combinationExists = i !== -1;
+        const onToggleRadioButton = (_) => {
+          if (combinationExists) {
+            const newCombinations = [...combinations];
+            newCombinations.splice(i, 1);
+            onChange(newCombinations);
+          } else {
+            const newCombinations = [
+              ...combinations,
+              { filters: filterCombination, stock: 1, price: 0 },
+            ];
+            onChange(newCombinations);
+          }
+        };
 
         return (
           <Box
             key={[
               "combination",
-              ...combination.map((filter) => "-" + filter),
+              ...filterCombination.map((filter) => "-" + filter),
             ].join()}
           >
             <Box display="flex" p={1} justifyContent="space-between">
               <Box display="flex" alignItems="center">
-                <Radio checked={combinationExists} />
+                <Radio
+                  checked={combinationExists}
+                  onClick={onToggleRadioButton}
+                />
                 <Box ml={2} mr={2}>
                   <Typography>
                     <b>{filters[0].name + ": "}</b>
-                    {combination[0]}
+                    {filterCombination[0]}
                   </Typography>
                 </Box>
                 {filters.length > 1 && (
@@ -235,7 +258,7 @@ export const CombinationList = ({
                     <Box ml={2}>
                       <Typography>
                         <b>{filters[1].name + ": "}</b>
-                        {combination[1]}
+                        {filterCombination[1]}
                       </Typography>
                     </Box>
                   </>
@@ -246,11 +269,16 @@ export const CombinationList = ({
                   <TextField
                     margin="dense"
                     sx={{ width: 160 }}
-                    InputProps={{ inputProps: { min: 1 } }}
+                    InputProps={{ inputProps: { min: 0 } }}
                     type="number"
                     label="Stock"
                     disabled={!combinationExists}
                     value={stock}
+                    onChange={(event) => {
+                      const newCombinations = [...combinations];
+                      newCombinations[i].stock = Number(event.target.value);
+                      onChange(newCombinations);
+                    }}
                   />
                 </Box>
                 <TextField
@@ -264,6 +292,11 @@ export const CombinationList = ({
                   disabled={!combinationExists}
                   value={price}
                   label="Price"
+                  onChange={(event) => {
+                    const newCombinations = [...combinations];
+                    newCombinations[i].price = event.target.value;
+                    onChange(newCombinations);
+                  }}
                 />
               </Box>
             </Box>
@@ -353,13 +386,18 @@ export const SpecificationsTable = (props) => {
 };
 
 export const EditItemView = () => {
+  const { firestore: db, storage } = useFirebase();
+  const { user } = useAuthState();
+  const navigate = useNavigate();
+  const [value] = useCollection(collection(db, "categories"));
+  const categories = value?.docs.map((doc) => doc.data()) ?? [];
   const { itemId } = useParams();
   const isNewItem = !itemId;
   const conditionKeys = Object.keys(Condition);
-  const [specifications, setSpecifications] = React.useState([]);
+  const [imageUploading, setImageUploading] = React.useState(false);
   const [addCategoryDialogOpen, setAddCategoryDialogOpen] =
     React.useState(false);
-  const { control, handleSubmit, reset, watch } = useForm({
+  const { control, handleSubmit, formState, watch } = useForm({
     defaultValues: {
       itemName: "",
       condition: Condition.Mint.name,
@@ -368,7 +406,7 @@ export const EditItemView = () => {
       description: "",
       image: {
         name: "",
-        URL: "",
+        ref: "",
       },
       productSpecifications: [],
       category: {
@@ -379,7 +417,16 @@ export const EditItemView = () => {
     },
   });
   const currentCategory = watch("category");
-  const onSubmit = () => {};
+  const onSubmit = async (data) => {
+    const newData = {
+      ...data,
+      category: data.category.name,
+      seller: user.displayName,
+    };
+    console.log(newData);
+    const docRef = await addDoc(collection(db, "items"), newData);
+    navigate(`/items/${docRef.id}`);
+  };
   const onImageChange = (image, onChange) => {
     onChange(image);
   };
@@ -392,7 +439,7 @@ export const EditItemView = () => {
   };
   return (
     <Box>
-      <Box mt={3}>
+      <Box mt={3} mb={formState.isDirty ? 12 : 2}>
         <Container maxWidth="md">
           <Typography variant="h5" gutterBottom>
             {isNewItem ? "Create New Item" : "Edit Item"}
@@ -509,12 +556,22 @@ export const EditItemView = () => {
                     id="raised-button-file"
                     multiple
                     type="file"
-                    onChange={(event) =>
-                      onImageChange(
-                        { name: event.target.files[0].name },
-                        onChange
-                      )
-                    }
+                    onChange={async (event) => {
+                      const name = event.target.files[0].name;
+                      const uuid = uuidv4();
+                      const storageRef = ref(storage, uuid);
+                      setImageUploading(true);
+                      uploadBytes(
+                        storageRef,
+                        await event.target.files[0].arrayBuffer()
+                      ).then(() => {
+                        onImageChange(
+                          { name: event.target.files[0].name, ref: uuid },
+                          onChange
+                        );
+                        setImageUploading(false);
+                      });
+                    }}
                   />
                   <label htmlFor="raised-button-file">
                     <Button
@@ -525,14 +582,20 @@ export const EditItemView = () => {
                       Choose Image
                     </Button>
                   </label>
-                  <Box ml={2}>
-                    <Typography
-                      color={
-                        image.name === "" ? "textSecondary" : "textPrimary"
-                      }
-                    >
-                      {image.name === "" ? "No Image Was Selected" : image.name}
-                    </Typography>
+                  <Box ml={2} display="flex" alignItems="center">
+                    {!imageUploading ? (
+                      <Typography
+                        color={
+                          image.name === "" ? "textSecondary" : "textPrimary"
+                        }
+                      >
+                        {image.name === ""
+                          ? "No Image Was Selected"
+                          : image.name}
+                      </Typography>
+                    ) : (
+                      <CircularProgress size={28} />
+                    )}
                   </Box>
                 </Box>
               )}
@@ -597,7 +660,7 @@ export const EditItemView = () => {
                 </Grid>
               </Grid>
             </Box>
-            <Box pt={2} pb={2}>
+            <Box pt={2}>
               {currentCategory?.filters.length !== 0 && (
                 <Controller
                   name="filterCombinations"
@@ -612,12 +675,26 @@ export const EditItemView = () => {
                 />
               )}
             </Box>
+            <Snackbar
+              width={1}
+              anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+              open={formState.isDirty}
+              message="Form has been edited"
+              action={
+                <Box pl={20}>
+                  <Button type="submit">Create Item</Button>
+                </Box>
+              }
+            />
           </form>
         </Container>
         <AddCategoryDialog
           open={addCategoryDialogOpen}
           onClose={() => setAddCategoryDialogOpen(false)}
-          onAddCategory={undefined}
+          onAddCategory={(category) => {
+            addDoc(collection(db, "categories"), category);
+            setAddCategoryDialogOpen(false);
+          }}
         />
       </Box>
     </Box>

@@ -308,7 +308,7 @@ export const ItemView = () => {
                   <Button
                     fullWidth
                     variant="contained"
-                    disabled={!placeholder.stock}
+                    disabled={true || !placeholder.stock}
                   >
                     {"Buy Now"}
                   </Button>
