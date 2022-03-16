@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  Paper,
-  Spacing,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Container, Paper, Typography } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import React from "react";
 
