@@ -1,12 +1,19 @@
 import {
   Box,
   Button,
+  CircularProgress,
   Container,
   Divider,
   Link,
   Paper,
   Typography,
 } from "@mui/material";
+import { collection, query, where } from "firebase/firestore";
+import { getDownloadURL, ref } from "firebase/storage";
+import { useAuthState } from "../../contexts/AuthContext";
+import { useCollection } from "react-firebase-hooks/firestore";
+import { useFirebase } from "../../contexts/FirebaseContext";
+
 import React from "react";
 
 const placeholder = {
@@ -20,8 +27,9 @@ const placeholder = {
         {
           ID: "1",
           name: "Black Box",
-          imageURL:
+          imageRef:
             "https://di2ponv0v5otw.cloudfront.net/posts/2018/07/10/5b45a8162140f3f8d4b2e9b2/m_5b45a818534ef923d7f95f2c.jpeg",
+          quantity: 3,
           filters: [
             { name: "Size", value: "12" },
             { name: "Color", value: "Black" },
@@ -30,7 +38,8 @@ const placeholder = {
         {
           ID: "2",
           name: "Black Box",
-          imageURL:
+          quantity: 3,
+          imageRef:
             "https://di2ponv0v5otw.cloudfront.net/posts/2018/07/10/5b45a8162140f3f8d4b2e9b2/m_5b45a818534ef923d7f95f2c.jpeg",
           filters: [
             { name: "Size", value: "12" },
@@ -48,7 +57,8 @@ const placeholder = {
         {
           ID: "3",
           name: "Black Box",
-          imageURL:
+          quantity: 3,
+          imageRef:
             "https://di2ponv0v5otw.cloudfront.net/posts/2018/07/10/5b45a8162140f3f8d4b2e9b2/m_5b45a818534ef923d7f95f2c.jpeg",
           filters: [
             { name: "Size", value: "12" },
@@ -58,7 +68,8 @@ const placeholder = {
         {
           ID: "4",
           name: "Black Box",
-          imageURL:
+          quantity: 3,
+          imageRef:
             "https://di2ponv0v5otw.cloudfront.net/posts/2018/07/10/5b45a8162140f3f8d4b2e9b2/m_5b45a818534ef923d7f95f2c.jpeg",
           filters: [
             { name: "Size", value: "12" },
@@ -76,7 +87,8 @@ const placeholder = {
         {
           ID: "5",
           name: "Black Box",
-          imageURL:
+          quantity: 3,
+          imageRef:
             "https://di2ponv0v5otw.cloudfront.net/posts/2018/07/10/5b45a8162140f3f8d4b2e9b2/m_5b45a818534ef923d7f95f2c.jpeg",
           filters: [
             { name: "Size", value: "12" },
@@ -86,7 +98,8 @@ const placeholder = {
         {
           ID: "6",
           name: "Black Box",
-          imageURL:
+          quantity: 3,
+          imageRef:
             "https://di2ponv0v5otw.cloudfront.net/posts/2018/07/10/5b45a8162140f3f8d4b2e9b2/m_5b45a818534ef923d7f95f2c.jpeg",
           filters: [
             { name: "Size", value: "12" },
@@ -99,20 +112,25 @@ const placeholder = {
 };
 
 const Order = ({ order }) => {
+  const { storage } = useFirebase();
+  const [imageURLs, setImageURLs] = React.useState(
+    Array.from({ length: order.items.length }, () => "")
+  );
+  React.useEffect(() => {
+    order.items.forEach((item, i) => {
+      getDownloadURL(ref(storage, item.imageRef)).then((url) => {
+        const newImageURLs = [...imageURLs];
+        newImageURLs[i] = url;
+        setImageURLs(newImageURLs);
+      });
+    });
+  }, [imageURLs, order.items, storage]);
   const { date, ID, cost, estimatedArrivalDate, items } = order;
   return (
     <Paper variant="outlined">
       <Box display="flex" justifyContent="space-between" p={1}>
         <Typography variant="subtitle1">{"Order ID: " + ID}</Typography>
-        <Typography variant="subtitle1">
-          {"Order Date: " +
-            date.toLocaleDateString("en-US", {
-              weekday: "long",
-              month: "long",
-              day: "numeric",
-              year: "numeric",
-            })}
-        </Typography>
+        <Typography variant="subtitle1">{"Order Date: " + date}</Typography>
       </Box>
       <Box mb={1}>
         <Divider />
@@ -128,7 +146,7 @@ const Order = ({ order }) => {
           <Box
             component="img"
             sx={{ borderRadius: 2 }}
-            src={item.imageURL}
+            src={imageURLs[i]}
             mr={2}
           />
           <Box>
@@ -137,6 +155,9 @@ const Order = ({ order }) => {
                 <b>{item.name}</b>
               </Typography>
             </Link>
+            <Typography variant="subtitle1">
+              {"Quantity: " + item.quantity}
+            </Typography>
             {item.filters.map((filter, i) => (
               <Typography
                 variant="subtitle1"
@@ -157,13 +178,7 @@ const Order = ({ order }) => {
         <Box>
           <Typography variant="subtitle1">{"Order Cost: " + cost}</Typography>
           <Typography variant="subtitle1">
-            {"Estimated Arrival Date: " +
-              estimatedArrivalDate.toLocaleDateString("en-US", {
-                weekday: "long",
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-              })}
+            {"Estimated Arrival Date: " + estimatedArrivalDate}
           </Typography>
         </Box>
         <Button variant="contained" sx={{ height: 40 }}>
@@ -175,21 +190,53 @@ const Order = ({ order }) => {
 };
 
 export const MyOrdersView = () => {
+  const { firestore: db } = useFirebase();
+  const { user } = useAuthState();
+  const [snapshot, loading] = useCollection(
+    query(collection(db, "orders"), where("userID", "==", user.uid))
+  );
+  const orders = !snapshot
+    ? []
+    : snapshot.docs.map((doc) => {
+        const id = doc.id;
+        const data = doc.data();
+        return {
+          date: data.orderDate,
+          ID: id,
+          estimatedArrivalDate: data.arrivalDate,
+          cost: data.cost,
+          items: data.items.map((item) => ({
+            filters: [...item.filters],
+            quantity: item.quantity,
+            name: item.name,
+            imageRef: item.imageRef,
+            ID: item.imageRef, // We lazy out here...
+          })),
+        };
+      });
   return (
     <Container maxWidth="md">
-      <Box mt={2}>
-        <Typography variant="h4">{"My Orders"}</Typography>
-      </Box>
-      <Box mb={1}>
-        <Typography variant="subtitle1">
-          {placeholder.orders.length + " orders placed"}
-        </Typography>
-      </Box>
-      {placeholder.orders.map((order, i) => (
-        <Box mb={"12px"} key={"order-" + order.ID}>
-          <Order order={order} />
+      {loading ? (
+        <Box display="flex" justifyContent="center">
+          <CircularProgress />
         </Box>
-      ))}
+      ) : (
+        <Box>
+          <Box mt={2}>
+            <Typography variant="h4">{"My Orders"}</Typography>
+          </Box>
+          <Box mb={1}>
+            <Typography variant="subtitle1">
+              {orders.length + " orders placed"}
+            </Typography>
+          </Box>
+          {orders.map((order, i) => (
+            <Box mb={"12px"} key={"order-" + order.ID}>
+              <Order order={order} />
+            </Box>
+          ))}
+        </Box>
+      )}
     </Container>
   );
 };
