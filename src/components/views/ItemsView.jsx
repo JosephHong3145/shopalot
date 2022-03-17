@@ -7,7 +7,7 @@ import {
   InputAdornment,
   TextField,
 } from "@mui/material";
-import OverallNavBar from "../navigation/Header"; // ??HOW TO ADD NAVBAR HERE (only other page +ItemView)
+import OverallNavBar from "../navigation/NavBar"; // ??HOW TO ADD NAVBAR HERE (only other page +ItemView)
 // No need to import OverallNav in here since we'll be importing itemsView into HomeView (and below havbar)
 import { collection, getDocs } from "firebase/firestore";
 import { matchSorter } from "match-sorter";
@@ -28,7 +28,6 @@ export const ItemsView = () => {
       const categories = [
         ...new Set(snapshot.docs.map((doc) => doc.data().category)),
       ];
-      console.log(categories);
       if (query === "") {
         setDocs([...snapshot.docs]);
       } else {
@@ -54,7 +53,6 @@ export const ItemsView = () => {
       }
     }
   }, [snapshot, query]);
-  console.log(docs);
   // const items = [
   //   <Item
   //     key={"item1"}

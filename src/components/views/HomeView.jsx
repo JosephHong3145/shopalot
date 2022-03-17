@@ -1,13 +1,10 @@
-import { ItemsView } from "./ItemsView";
-import OverallNavBar from "../navigation/Header";
+import { Container } from "@mui/material";
 import React, { Component } from "react";
-//  import Swipe from "../navigation/SwipeBar";
 
 export const HomeView = () => {
   return (
-    <div>
-      <OverallNavBar />
-      <ItemsView />
-    </div>
+    <Container maxWidth="xl">
+      <div>{"Home View"}</div>
+    </Container>
   );
 };
