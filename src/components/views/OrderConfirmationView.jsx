@@ -20,7 +20,7 @@ export const OrderConfirmationView = () => {
           </Typography>
         </Box>
         <Box marginLeft={3}>
-          <Button href="/my-orders" size="h11" marginLeft={3}>
+          <Button href="/my-orders" size="h10" marginLeft={3}>
             {"Review your orders"}
           </Button>
         </Box>
