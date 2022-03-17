@@ -1,5 +1,13 @@
-import React from "react";
+import { ItemsView } from "./ItemsView";
+import OverallNavBar from "../navigation/Header";
+import React, { Component } from "react";
+//  import Swipe from "../navigation/SwipeBar";
 
 export const HomeView = () => {
-  return <div>HomeView</div>;
+  return (
+    <div>
+      <OverallNavBar />
+      <ItemsView />
+    </div>
+  );
 };
