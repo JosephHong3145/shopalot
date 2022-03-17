@@ -202,7 +202,6 @@ export const MyCartView = () => {
     value?.docs.map((doc) => {
       return { ...doc.data(), id: doc.id };
     }) ?? [];
-  console.log(items);
   return (
     <Container size="md">
       {items ? (
