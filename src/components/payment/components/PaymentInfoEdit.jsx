@@ -1,9 +1,5 @@
-import React from 'react';
+import React from "react";
 
-export const PaymentInfo = () => {
-  return (
-  <div>
-      
-  </div>
-  );
+export const PaymentInfoEdit = () => {
+  return <h3>Edit Payment</h3>;
 };

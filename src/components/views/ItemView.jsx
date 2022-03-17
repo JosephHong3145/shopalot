@@ -5,9 +5,11 @@ import {
   Card,
   CardContent,
   CardHeader,
+  CircularProgress,
   Container,
   Divider,
   Grid,
+  Grow,
   IconButton,
   InputLabel,
   LinearProgress,
@@ -24,6 +26,21 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
+import { getDownloadURL, ref } from "firebase/storage";
+import { useAuthState } from "../../contexts/AuthContext";
+import {
+  useCollectionData,
+  useDocumentData,
+} from "react-firebase-hooks/firestore";
+import { useFirebase } from "../../contexts/FirebaseContext";
 import { useParams } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -33,8 +50,8 @@ import LockIcon from "@mui/icons-material/Lock";
 import React from "react";
 
 const placeholder = {
-  imageURL:
-    "https://di2ponv0v5otw.cloudfront.net/posts/2018/07/10/5b45a8162140f3f8d4b2e9b2/m_5b45a818534ef923d7f95f2c.jpeg",
+  // imageURL:
+  //   "https://di2ponv0v5otw.cloudfront.net/posts/2018/07/10/5b45a8162140f3f8d4b2e9b2/m_5b45a818534ef923d7f95f2c.jpeg",
   itemName: "Adidas Grand Court Sneakers",
   seller: "Malek",
   ratingsCount: [1, 5, 3, 13, 73],
@@ -156,9 +173,58 @@ const QuestionComponent = (props) => {
 
 export const ItemView = () => {
   const { itemId } = useParams();
+  const { user } = useAuthState();
+  const { firestore: db, storage } = useFirebase();
+  const [item] = useDocumentData(doc(db, "items", itemId));
+  const [categoryFilters, setCategoryFilters] = React.useState([]);
+  const [categoryFilterValues, setCategoryFilterValues] = React.useState([
+    "None",
+    "None",
+  ]);
+  const [quantity, setQuantity] = React.useState(1);
+  const { stock, price } = item?.filterCombinations.find((combination) => {
+    if (combination.filters.length === 0) return false;
+    if (
+      combination.filters.length === 1 &&
+      combination.filters[0] !== categoryFilterValues[0]
+    )
+      return false;
+    if (
+      combination.filters.length === 2 &&
+      (combination.filters[0] !== categoryFilterValues[0] ||
+        combination.filters[1] !== categoryFilterValues[1])
+    )
+      return false;
+    return true;
+  }) || { stock: 0, price: 0 };
+  React.useEffect(() => {
+    if (stock === 0) {
+      setQuantity(0);
+    } else {
+      setQuantity(1);
+    }
+  }, [stock]);
+  React.useEffect(() => {
+    const fetchData = async () => {
+      const querySnapshot = await getDocs(
+        query(collection(db, "categories"), where("name", "==", item.category))
+      );
+      setCategoryFilters(querySnapshot.docs[0].data().filters);
+    };
+    if (item?.category) {
+      fetchData();
+    }
+  }, [db, item]);
+
+  const [imageURL, setImageURL] = React.useState("");
+  if (item) {
+    getDownloadURL(ref(storage, item.image.ref)).then((url) => {
+      setImageURL(url);
+    });
+  }
   const earliestDelivery = new Date();
   earliestDelivery.setDate(
-    earliestDelivery.getDate() + placeholder.orderProcessingDelay
+    earliestDelivery.getDate() + Number(item?.orderProcessingDelay) ?? 0
   );
   let totalRatings = 0;
   placeholder.ratingsCount.forEach((ratingCount) => {
@@ -169,32 +235,64 @@ export const ItemView = () => {
     averageRating = (i + 1) * (ratingCount / totalRatings);
   });
   averageRating = Math.ceil(averageRating * 2) / 2;
-  return (
+  const addItemToCart = (_) => {
+    const _item = {
+      filters: categoryFilters.map((filter, i) => ({
+        name: filter.name,
+        value: categoryFilterValues[i],
+      })),
+      imageRef: item.image.ref,
+      name: item.itemName,
+      quantity: quantity,
+      seller: item.seller,
+      price: price,
+      userId: user.uid,
+    };
+    addDoc(collection(db, "cart"), _item);
+  };
+  return item ? (
     <Container maxWidth="xl">
       <Box mt={4}>
         <Grid container spacing={4}>
           <Grid item xs={4}>
-            <Box
-              component="img"
-              sx={{ width: 1, borderRadius: 2 }}
-              src={placeholder.imageURL}
-            />
+            <Box sx={{ height: "445px", borderRadius: 2 }}>
+              {imageURL === "" ? (
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  sx={{ height: 1 }}
+                >
+                  <CircularProgress />
+                </Box>
+              ) : (
+                <Box
+                  component="img"
+                  src={imageURL}
+                  sx={{
+                    width: 1,
+                    height: 1,
+                    objectFit: "contain",
+                  }}
+                />
+              )}
+            </Box>
           </Grid>
           <Grid item xs={5}>
             <Typography>
               {"Category > "}
               <Link href="#" underline="none">
-                {placeholder.category}
+                {item.category}
               </Link>
             </Typography>
             <Typography variant="h5">
-              <b>{placeholder.itemName}</b>
+              <b>{item.itemName}</b>
             </Typography>
             <Typography variant="subtitle2">
               <b>
                 {"Sold By: "}
                 <Link href="#" underline="none">
-                  {placeholder.seller}
+                  {item.seller}
                 </Link>
               </b>
             </Typography>
@@ -210,57 +308,92 @@ export const ItemView = () => {
             </Box>
             <Divider light />
             <Box mt={2}>
-              <Typography variant="h4" color="primary.dark">
-                <b>{placeholder.price}</b>
+              <Typography
+                variant="h4"
+                color={stock > 0 ? "primary.dark" : "error"}
+              >
+                <b>{stock === 0 ? "Item Unavailable" : "$" + price + " CAD"}</b>
               </Typography>
             </Box>
             <Box mt={2}>
-              <InputLabel id="size-select-label">{"Size"}</InputLabel>
-              <Select
-                labelId="size-select-label"
-                value={"11"}
-                fullWidth
-                variant="outlined"
-              >
-                {placeholder.sizeOptions.map((value) => (
-                  <MenuItem key={"size-option-" + value} value={value}>
-                    {value}
-                  </MenuItem>
-                ))}
-              </Select>
+              {categoryFilters.length > 0 && (
+                <Box>
+                  <InputLabel id="first-filter-select-label">
+                    {categoryFilters[0].name}
+                  </InputLabel>
+                  <Select
+                    labelId="first-filter-select-label"
+                    value={categoryFilterValues[0]}
+                    onChange={(event) =>
+                      setCategoryFilterValues([
+                        event.target.value,
+                        categoryFilterValues[1],
+                      ])
+                    }
+                    fullWidth
+                    variant="outlined"
+                  >
+                    <MenuItem value={"None"}>{"None"}</MenuItem>
+                    {categoryFilters[0].options.map((value) => (
+                      <MenuItem
+                        key={"first-filter-option-" + value}
+                        value={value}
+                      >
+                        {value}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Box>
+              )}
             </Box>
             <Box mt={1}>
-              <InputLabel id="color-select-label">{"Color"}</InputLabel>
-              <Select
-                labelId="color-select-label"
-                value={"Black"}
-                fullWidth
-                variant="outlined"
-              >
-                {placeholder.colorOptions.map((value) => (
-                  <MenuItem key={"color-option-" + value} value={value}>
-                    {value}
-                  </MenuItem>
-                ))}
-              </Select>
+              {categoryFilters.length > 1 && (
+                <Box>
+                  <InputLabel id="second-filter-select-label">
+                    {categoryFilters[1].name}
+                  </InputLabel>
+                  <Select
+                    value={categoryFilterValues[1]}
+                    labelId="second-filter-select-label"
+                    fullWidth
+                    variant="outlined"
+                    onChange={(event) =>
+                      setCategoryFilterValues([
+                        categoryFilterValues[0],
+                        event.target.value,
+                      ])
+                    }
+                  >
+                    <MenuItem value={"None"}>{"None"}</MenuItem>
+                    {categoryFilters[1].options.map((value) => (
+                      <MenuItem
+                        key={"second-filter-option-" + value}
+                        value={value}
+                      >
+                        {value}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Box>
+              )}
             </Box>
           </Grid>
           <Grid item xs={3}>
             <Paper variant="outlined" sx={{ height: 1 }}>
               <Box m={3}>
                 <Typography variant="h6" gutterBottom>
-                  {placeholder.price}
+                  {stock === 0 ? "Item Unavailable" : "$" + price + " CAD"}
                 </Typography>
                 <Divider light />
                 <Box mt={1}>
                   <Typography variant="subtitle2">
                     <b>{"Condition: "}</b>
-                    {placeholder.condition}
+                    {item.condition}
                   </Typography>
-                  <Typography variant="subtitle2">
+                  {/* <Typography variant="subtitle2">
                     <b>{"Ships From: "}</b>
                     {placeholder.sellerLocation}
-                  </Typography>
+                  </Typography> */}
                   <Typography variant="subtitle2">
                     <b>{"Earliest Delivery: "}</b>
                     {earliestDelivery.toLocaleDateString("en-US", {
@@ -271,7 +404,7 @@ export const ItemView = () => {
                   </Typography>
                   <Typography variant="subtitle2">
                     <b>{"Refund Policy: "}</b>
-                    {placeholder.refundPolicy}
+                    {item.refundPolicy}
                   </Typography>
                 </Box>
                 <Box mt={1}>
@@ -280,9 +413,11 @@ export const ItemView = () => {
                 <Box mt={1}>
                   <Typography
                     variant="h6"
-                    color={placeholder.stock > 0 ? "primary.dark" : "error"}
+                    color={stock > 0 ? "primary.dark" : "error"}
                   >
-                    <b>{placeholder.stock > 0 ? "In Stock" : "Not In Stock"}</b>
+                    <b>
+                      {stock > 0 ? "In Stock (" + stock + ")" : "Not In Stock"}
+                    </b>
                   </Typography>
                 </Box>
                 <Box mt={1}>
@@ -290,16 +425,24 @@ export const ItemView = () => {
                     type="number"
                     label="Quantity"
                     variant="filled"
-                    disabled={!placeholder.stock}
+                    disabled={!stock}
+                    value={quantity}
                     fullWidth
-                    inputProps={{ min: 1, max: placeholder.stock }}
+                    inputProps={{ min: 1, max: stock }}
+                    onChange={(event) => {
+                      const value = Number(event.target.value);
+                      if (value < 1) setQuantity(1);
+                      else if (value > stock) setQuantity(stock);
+                      else setQuantity(value);
+                    }}
                   />
                 </Box>
                 <Box mt={2}>
                   <Button
                     fullWidth
                     variant="contained"
-                    disabled={!placeholder.stock}
+                    disabled={!stock}
+                    onClick={addItemToCart}
                   >
                     {"Add to Cart"}
                   </Button>
@@ -308,7 +451,7 @@ export const ItemView = () => {
                   <Button
                     fullWidth
                     variant="contained"
-                    disabled={!placeholder.stock}
+                    disabled={true || !stock}
                   >
                     {"Buy Now"}
                   </Button>
@@ -340,12 +483,12 @@ export const ItemView = () => {
             <Typography variant="h5">
               <b>{"Product Description"}</b>
             </Typography>
-            <Box>
+            <Box mt={3}>
               <Typography
                 paragraph
-                style={{ whiteSpace: "pre-line", lineHeight: 1 }}
+                style={{ whiteSpace: "pre-line", lineHeight: 2 }}
               >
-                {placeholder.productDescription}
+                {item.description}
               </Typography>
             </Box>
           </Grid>
@@ -357,14 +500,12 @@ export const ItemView = () => {
               <TableContainer component={Paper} variant="outlined">
                 <Table sx={{ minWidth: 1 }}>
                   <TableBody>
-                    {placeholder.productSpecifications.map(
-                      ({ name, value }) => (
-                        <TableRow key={"specifications-table-row-" + name}>
-                          <TableCell>{name}</TableCell>
-                          <TableCell>{value}</TableCell>
-                        </TableRow>
-                      )
-                    )}
+                    {item.productSpecifications.map(({ name, value }) => (
+                      <TableRow key={"specifications-table-row-" + name}>
+                        <TableCell>{name}</TableCell>
+                        <TableCell>{value}</TableCell>
+                      </TableRow>
+                    ))}
                   </TableBody>
                 </Table>
               </TableContainer>
@@ -450,7 +591,6 @@ export const ItemView = () => {
           <Grid item xs={8}>
             <Box display="flex" justifyContent="space-between">
               <Select
-                autowidth
                 value={"Highest Rating"}
                 variant="standard"
                 renderValue={(value) => <Box pl={1}>{value}</Box>}
@@ -513,6 +653,12 @@ export const ItemView = () => {
             </Box>
           </Grid>
         </Grid>
+      </Box>
+    </Container>
+  ) : (
+    <Container maxWidth="xl">
+      <Box display="flex" justifyContent="center">
+        <CircularProgress />
       </Box>
     </Container>
   );

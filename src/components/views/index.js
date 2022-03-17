@@ -10,3 +10,4 @@ export { ProfileView } from "./ProfileView";
 
 export { CheckoutView } from "./paymentviews/CheckoutView";
 export { EditItemView } from "./EditItemView";
+export { MyOrdersView } from "./MyOrdersView";

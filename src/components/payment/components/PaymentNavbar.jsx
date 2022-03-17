@@ -1,7 +1,7 @@
 import { AppBar, Box, Toolbar, Typography } from "@mui/material";
 import React from "react";
 
-function PaymentNavbar() {
+export function PaymentNavbar() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -15,5 +15,3 @@ function PaymentNavbar() {
     </Box>
   );
 }
-
-export default PaymentNavbar;
