@@ -8,3 +8,4 @@ export { MyProfileView } from "./MyProfileView";
 export { NotFoundView } from "./NotFoundView";
 export { ProfileView } from "./ProfileView";
 export { EditItemView } from "./EditItemView";
+export { MyOrdersView } from "./MyOrdersView";
