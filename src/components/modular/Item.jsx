@@ -27,7 +27,6 @@ export default function Item(props) {
   } = props;
   const [imageURL, setImageURL] = React.useState("");
   React.useEffect(() => {
-    console.log(imageRef);
     getDownloadURL(ref(storage, imageRef)).then((url) => {
       setImageURL(url);
     });
