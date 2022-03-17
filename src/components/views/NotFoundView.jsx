@@ -1,5 +1,10 @@
+import { Container } from "@mui/material";
 import React from "react";
 
 export const NotFoundView = () => {
-  return <div>NotFoundView</div>;
+  return (
+    <Container maxWidth="xl">
+      <div>{"NotFoundView"}</div>
+    </Container>
+  );
 };
