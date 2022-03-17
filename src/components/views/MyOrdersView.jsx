@@ -127,7 +127,6 @@ const Order = ({ order, db }) => {
   }, [imageURLs, order.items, storage]);
   const { date, ID, cost, estimatedArrivalDate, items } = order;
   const cancelOrder = (_) => {
-    console.log(order.ID);
     deleteDoc(doc(db, "orders", order.ID));
   };
   return (
