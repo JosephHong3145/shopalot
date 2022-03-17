@@ -45,8 +45,24 @@ export const Routes = () => {
           </RequireAuth>
         }
       />
-      <Route exact path={Paths.items()} element={<ItemsView />} />
-      <Route exact path={Paths.item()} element={<ItemView />} />
+      <Route
+        exact
+        path={Paths.items()}
+        element={
+          <RequireAuth>
+            <ItemsView />
+          </RequireAuth>
+        }
+      />
+      <Route
+        exact
+        path={Paths.item()}
+        element={
+          <RequireAuth>
+            <ItemView />
+          </RequireAuth>
+        }
+      />
       <Route
         exact
         path={Paths.createItem()}
