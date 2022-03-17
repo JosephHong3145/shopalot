@@ -6,7 +6,9 @@ class Parts {
   static signup = "signup";
   static login = "login";
   static createItem = "create-item";
-  static myCartView = "my-cart-view";
+  static myCartView = "my-cart";
+  static editItem = "edit-item";
+  static myOrders = "my-orders";
 }
 
 export class Paths {
@@ -23,4 +25,6 @@ export class Paths {
   static login = () => `/${Parts.login}`;
   static createItem = () => `/${Parts.createItem}`;
   static myCartView = () => `/${Parts.myCartView}`;
+  static editItem = (itemId) => `/${Parts.editITem}/${Paths.itemPath(itemId)}`;
+  static myOrders = () => `/${Parts.myOrders}`;
 }
