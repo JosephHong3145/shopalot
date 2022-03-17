@@ -8,7 +8,7 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import { collection, query, where } from "firebase/firestore";
+import { collection, deleteDoc, doc, query, where } from "firebase/firestore";
 import { getDownloadURL, ref } from "firebase/storage";
 import { useAuthState } from "../../contexts/AuthContext";
 import { useCollection } from "react-firebase-hooks/firestore";
@@ -111,7 +111,7 @@ const placeholder = {
   ],
 };
 
-const Order = ({ order }) => {
+const Order = ({ order, db }) => {
   const { storage } = useFirebase();
   const [imageURLs, setImageURLs] = React.useState(
     Array.from({ length: order.items.length }, () => "")
@@ -126,6 +126,10 @@ const Order = ({ order }) => {
     });
   }, [imageURLs, order.items, storage]);
   const { date, ID, cost, estimatedArrivalDate, items } = order;
+  const cancelOrder = (_) => {
+    console.log(order.ID);
+    deleteDoc(doc(db, "orders", order.ID));
+  };
   return (
     <Paper variant="outlined">
       <Box display="flex" justifyContent="space-between" p={1}>
@@ -181,7 +185,7 @@ const Order = ({ order }) => {
             {"Estimated Arrival Date: " + estimatedArrivalDate}
           </Typography>
         </Box>
-        <Button variant="contained" sx={{ height: 40 }}>
+        <Button variant="contained" sx={{ height: 40 }} onClick={cancelOrder}>
           Cancel Order
         </Button>
       </Box>
@@ -232,7 +236,7 @@ export const MyOrdersView = () => {
           </Box>
           {orders.map((order, i) => (
             <Box mb={"12px"} key={"order-" + order.ID}>
-              <Order order={order} />
+              <Order order={order} db={db} />
             </Box>
           ))}
         </Box>
