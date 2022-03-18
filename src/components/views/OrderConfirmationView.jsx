@@ -5,7 +5,6 @@ import React from "react";
 export const OrderConfirmationView = () => {
   return (
     <Container>
-      <Typography>OrderConfirmationView</Typography>
       <Paper elevation={5}>
         <Box textAlign="left" sx={{ p: 1 }}>
           <Typography variant="h5" color="primary">
