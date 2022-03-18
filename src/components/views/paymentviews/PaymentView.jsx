@@ -12,7 +12,7 @@ import { Form, Formik } from "formik";
 import { OrderConfirmationView } from "../OrderConfirmationView";
 import { PaymentForm } from "./components/forms/PaymentForm";
 import { ReviewItems } from "./components/views/ReviewItems";
-import { collection, deleteDoc, doc, query, setDoc, where } from "firebase/firestore";
+import { collection, doc, query, setDoc, where } from "firebase/firestore";
 import { getDownloadURL, ref } from "firebase/storage";
 import { useAuthState } from "../../../contexts/AuthContext";
 import { useFirebase } from "../../../contexts/FirebaseContext";

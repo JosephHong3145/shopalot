@@ -59,6 +59,15 @@ export const Routes = () => {
       />
       <Route
         exact
+        path={Paths.payment()}
+        element={
+          <RequireAuth>
+            <CheckoutView />
+          </RequireAuth>
+        }
+      />
+      <Route
+        exact
         path={Paths.orderConfirmation()}
         element={
           <RequireAuth>
@@ -114,8 +123,6 @@ export const Routes = () => {
       {/* Authentication */}
       <Route exact path={Paths.signup()} element={<SignupView />} />
       <Route exact path={Paths.login()} element={<LoginView />} />
-      {/* Payment Flow while Making it */}
-      <Route exact path={Paths.payment()} element={<CheckoutView />} />
       {/* Default */}
       <Route path="*" element={<NotFoundView />} />
     </Switch>
