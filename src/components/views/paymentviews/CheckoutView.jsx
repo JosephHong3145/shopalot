@@ -1,12 +1,13 @@
-import { PaymentNavbar } from "./components/PaymentNavbar";
+import { PageLayout } from "./components/design/PageLayout";
 import { PaymentView } from "./PaymentView";
 import React from "react";
 
-export const CheckoutView = () => {
+export function CheckoutView() {
   return (
     <div>
-      <PaymentNavbar />
-      <PaymentView />
+      <PageLayout>
+        <PaymentView />
+      </PageLayout>
     </div>
   );
-};
+}

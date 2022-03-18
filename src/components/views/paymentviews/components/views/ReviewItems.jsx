@@ -1,10 +1,11 @@
-import { AddressInfo } from "./AddressInfo";
-import { Grid, Typography } from "@mui/material";
-import { PaymentInfo } from "./PaymentInfo";
+import { AddressInfo } from "../views/AddressInfo";
+import { Cart } from "./Cart";
+import { PaymentInfo } from "../views/PaymentInfo";
+import { Typography } from "@mui/material";
 import { useFormikContext } from "formik";
 import React from "react";
 
-const placeholder = {
+/* const placeholder = {
   cart: [
     {
       cost: 50.99,
@@ -23,19 +24,23 @@ const placeholder = {
       ],
     },
   ],
-};
+}; */
 
-export const ReviewItems = () => {
+export function ReviewItems() {
   const { values: formValues } = useFormikContext();
+
   return (
-    <React.Fragment>
-      <Typography variant="h5" gutterBottom>
+    <div>
+      <Typography variant="h6">
         Order summary
+        <p></p>
       </Typography>
-      <Grid container spacing={2}>
-        <AddressInfo formValues={formValues} />
-        <PaymentInfo formValues={formValues} />
-      </Grid>
-    </React.Fragment>
+      <div>
+        <Cart />
+      </div>
+      <AddressInfo formValues={formValues} />
+
+      <PaymentInfo formValues={formValues} />
+    </div>
   );
-};
+}
