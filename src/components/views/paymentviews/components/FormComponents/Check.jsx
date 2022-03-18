@@ -4,7 +4,7 @@ import {
   FormControl,
   FormControlLabel,
   FormHelperText
-} from '@material-ui/core';
+} from "@material-ui/core";
 import { useField } from "formik";
 import React from "react";
 
