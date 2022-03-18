@@ -14,6 +14,7 @@ import {
   stepClasses,
 } from "@mui/material";
 import { Form, Formik } from "formik";
+import { OrderConfirmationView } from "./OrderConfirmationView";
 import { PaymentInfo } from "./components/PaymentInfo";
 import { ReviewItems } from "./components/ReviewItems";
 import { template } from "./components/AddrPaymentForm";
@@ -34,6 +35,10 @@ function stepContent(step) {
     default:
       return <h3>Not Found</h3>;
   }
+}
+
+function navigate() {
+    let history = useHistory();
 }
 
 export function PaymentView() {
@@ -60,6 +65,7 @@ export function PaymentView() {
     // allows the user to go back to the previous step of the form
     setActiveStep(activeStep - 1);
   }
+
   return (
     <React.Fragment>
       <Typography>Checkout</Typography>
@@ -72,16 +78,7 @@ export function PaymentView() {
       </Stepper>
       <React.Fragment>
         {activeStep === steps.length ? (
-          <React.Fragment>
-            <Typography variant="h5" gutterBottom>
-              Thank you for your order.
-            </Typography>
-            <Typography variant="subtitle1">
-              Your order number is #2001539. We have emailed your order
-              confirmation, and will send you an update when your order has
-              shipped.
-            </Typography>
-          </React.Fragment>
+          <OrderConfirmationView />
         ) : (
           <Formik>
             {({ isSubmitting }) => (

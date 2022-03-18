@@ -240,7 +240,7 @@ export const MyCartView = () => {
                         .toFixed(2)}
                   </Typography>
                 </Box>
-                <Link to="/order-confirmation">
+                <Link to="/payment">
                   <Button type="button" variant="contained" fullWidth>
                     Proceed to Checkout
                   </Button>
