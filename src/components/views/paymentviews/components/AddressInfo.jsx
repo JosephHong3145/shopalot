@@ -14,7 +14,6 @@ export function AddressInfo(props) {
       </Typography>
         <Typography gutterBottom>{`${first} ${last}`}</Typography>
         <Typography gutterBottom>{`${address}`}</Typography>
-      </Typography>
     </Grid>
   );
 }
