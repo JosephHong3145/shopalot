@@ -38,22 +38,6 @@ function stepContent(step) {
   }
 }
 
-/* function getDate(separator = "") {
-  const newDate = new Date();
-  const date = newDate.getDate();
-  const month = newDate.getMonth() + 1;
-  const year = newDate.getFullYear();
-
-  return `${year}${separator}${
-    month < 10 ? `0${month}` : `${month}`
-  }${separator}${date}`;
-}
-
-function getDeliveryDate(separator = "") {
-  const now = getDate();
-  return now.setDate(now.getDate() + 14); // 14 days = 2 weeks = delivery date
-} */
-
 export function PaymentView() {
   const classes = useStyle();
   const [activeStep, setActiveStep] = useState(0);
