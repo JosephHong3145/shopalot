@@ -44,12 +44,7 @@ export function PaymentView() {
   const currentValidationSchema = validationSchema[activeStep];
   const isLastStep = activeStep === steps.length - 1;
 
-  /* function sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  } */
-
   async function submitForm(values, actions) {
-    // await sleep(1000);
     // adds a new order to to the userId with a generated ID
     setActiveStep(activeStep + 1);
     actions.setSubmitting(true);
