@@ -1,10 +1,10 @@
-import { Typography, Grid } from "@material-ui/core";
-import { useStyles } from "./Style";
+import { Grid, Typography } from "@mui/material";
+import { useStyle } from "./Style";
 import React from "react";
 
-export function PaymentDetails(props) {
+export function PaymentInfo(props) {
   const { formValues } = props;
-  const classes = useStyles();
+  const classes = useStyle();
   const { cardHolder, card, expiration } = formValues;
 
   return (

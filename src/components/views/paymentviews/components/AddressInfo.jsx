@@ -1,10 +1,10 @@
-import { Typography, Grid } from "@material-ui/core";
-import { useStyles } from "./Style";
+import { Grid, Typography } from "@mui/material";
+import { useStyle } from "./Style";
 import React from "react";
 
 export function AddressInfo(props) {
   const { formValues } = props;
-  const classes = useStyles();
+  const classes = useStyle();
   const { first, last, address } = formValues;
 
   return (
@@ -12,8 +12,8 @@ export function AddressInfo(props) {
       <Typography variant="h6" gutterBottom className={classes.title}>
         Shipping
       </Typography>
-        <Typography gutterBottom>{`${first} ${last}`}</Typography>
-        <Typography gutterBottom>{`${address}`}</Typography>
+      <Typography gutterBottom>{`${first} ${last}`}</Typography>
+      <Typography gutterBottom>{`${address}`}</Typography>
     </Grid>
   );
 }

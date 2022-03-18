@@ -1,6 +1,6 @@
 export const template = () => {
-  formId = "shipping";
-  formField = {
+  const formId = "shipping";
+  const formField = {
     first: {
       name: "first",
       label: "First name*",

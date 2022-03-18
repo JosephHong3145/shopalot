@@ -1,7 +1,7 @@
-import { Grid, Typography } from "@mui/material";
-import { useFormikContext } from "formik";
 import { AddressInfo } from "./AddressInfo";
+import { Grid, Typography } from "@mui/material";
 import { PaymentInfo } from "./PaymentInfo";
+import { useFormikContext } from "formik";
 import React from "react";
 
 const placeholder = {
@@ -26,7 +26,7 @@ const placeholder = {
 };
 
 export const ReviewItems = () => {
-  const { values: formValues } = useFormixContext();
+  const { values: formValues } = useFormikContext();
   return (
     <React.Fragment>
       <Typography variant="h5" gutterBottom>
