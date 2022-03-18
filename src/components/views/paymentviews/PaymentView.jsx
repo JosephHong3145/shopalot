@@ -14,7 +14,7 @@ import {
   stepClasses,
 } from "@mui/material";
 import { Form, Formik } from "formik";
-import { OrderConfirmationView } from "./OrderConfirmationView";
+import { OrderConfirmationView } from "../OrderConfirmationView";
 import { PaymentInfo } from "./components/PaymentInfo";
 import { ReviewItems } from "./components/ReviewItems";
 import { template } from "./components/AddrPaymentForm";
