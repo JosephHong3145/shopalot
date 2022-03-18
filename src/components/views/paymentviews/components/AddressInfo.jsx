@@ -1,5 +1,5 @@
 import { Typography, Grid } from '@material-ui/core';
-import useStyles from './styles';
+import useStyles from '.Style';
 import React from "react";
 
 export function AddressInfo(props) {
