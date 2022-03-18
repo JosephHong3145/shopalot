@@ -1,9 +1,9 @@
 import { Grid, Typography } from "@mui/material";
-import { useStyle } from "./Style";
+import { useStyle } from "../Style";
 import React from "react";
 
 export function AddressInfo(props) {
-  const { formValues } = props;
+  const { formValues = "empty" } = props || {};
   const classes = useStyle();
   const { first, last, address } = formValues;
 

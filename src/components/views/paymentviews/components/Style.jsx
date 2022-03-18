@@ -1,29 +1,33 @@
-import { createTheme, makeStyles } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 
-export const theme = createTheme({
-  palette: { type: "light", primary: "#EDF4ED", secondary: "#79B791" },
-});
-export const useStyle = makeStyles(() => ({
-  root: {
-    width: "auto",
-    marginLeft: theme.spacing(3),
-    marginRight: theme.spacing(3),
-    [theme.breakpoints.up(600 + theme.spacing(2) * 2)]: {
-      width: 600,
-      marginLeft: "auto",
-      marginRight: "auto",
-    },
-    backgroundColor: theme.palette.background.default,
-    color: theme.palette.text.primary,
+export const useStyle = makeStyles((theme) => ({
+  stepper: {
+    padding: theme.spacing(3, 0, 5),
   },
-  paper: {
+  buttons: {
+    display: "flex",
+    justifyContent: "flex-end",
+  },
+  button: {
     marginTop: theme.spacing(3),
-    marginBottom: theme.spacing(3),
-    padding: theme.spacing(3),
-    [theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
-      marginTop: theme.spacing(6),
-      marginBottom: theme.spacing(6),
-      padding: theme.spacing(3),
-    },
+    marginLeft: theme.spacing(1),
+  },
+  wrapper: {
+    margin: theme.spacing(1),
+    position: "relative",
+  },
+  buttonProgress: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+  },
+  listItem: {
+    padding: theme.spacing(1, 0),
+  },
+  total: {
+    fontWeight: "700",
+  },
+  title: {
+    marginTop: theme.spacing(2),
   },
 }));
