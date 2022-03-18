@@ -13,9 +13,11 @@ import {
   ItemView,
   ItemsView,
   LoginView,
+  MyCartView,
   MyOrdersView,
   MyProfileView,
   NotFoundView,
+  OrderConfirmationView,
   ProfileView,
   SignupView,
 } from "./components/views";
@@ -46,8 +48,42 @@ export const Routes = () => {
           </RequireAuth>
         }
       />
-      <Route exact path={Paths.items()} element={<ItemsView />} />
-      <Route exact path={Paths.item()} element={<ItemView />} />
+      <Route
+        exact
+        path={Paths.myCartView()}
+        element={
+          <RequireAuth>
+            <MyCartView />
+          </RequireAuth>
+        }
+      />
+      <Route
+        exact
+        path={Paths.orderConfirmation()}
+        element={
+          <RequireAuth>
+            <OrderConfirmationView />
+          </RequireAuth>
+        }
+      />
+      <Route
+        exact
+        path={Paths.items()}
+        element={
+          <RequireAuth>
+            <ItemsView />
+          </RequireAuth>
+        }
+      />
+      <Route
+        exact
+        path={Paths.item()}
+        element={
+          <RequireAuth>
+            <ItemView />
+          </RequireAuth>
+        }
+      />
       <Route
         exact
         path={Paths.createItem()}
