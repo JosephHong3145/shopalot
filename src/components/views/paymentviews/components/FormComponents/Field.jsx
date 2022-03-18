@@ -1,5 +1,5 @@
-import { TextField } from "@material-ui/core";
 import { at } from "lodash";
+import { TextField } from "@material-ui/core";
 import { useField } from "formik";
 import React from "react";
 
@@ -23,4 +23,4 @@ export default function InputField(props) {
       {...rest}
     />
   );
-}
+};
