@@ -1,4 +1,5 @@
-import { CheckboxField, InputField } from "./FormComponents";
+import { CheckboxField } from "./FormComponents/Check"
+import { InputField } from "./FormComponents/Field";
 import { Firestore, collection, query, where } from "firebase/firestore";
 import {
   Button,

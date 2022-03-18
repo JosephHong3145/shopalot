@@ -2,7 +2,7 @@ import { Grid, Typography } from "@mui/material";
 import { useFormixContext } from "formik";
 import { AddressInfo } from "./AddressInfo";
 import { PaymentInfo } from "/PaymentInfo";
-import React, { Component, useState } from "react";
+import React from "react";
 
 const placeholder = {
   cart: [

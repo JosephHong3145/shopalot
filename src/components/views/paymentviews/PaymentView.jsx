@@ -1,4 +1,4 @@
-import { AddressInfo } from "./components/AddressForm";
+import { AddressInfo } from "./components/AddressInfo";
 import {
   Button,
   Card,
@@ -14,7 +14,8 @@ import {
   stepClasses,
 } from "@mui/material";
 import { Form, Formik } from "formik";
-import { PaymentInfo, ReviewItems,  } from "./components";
+import { PaymentInfo } from "./components/PaymentInfo"
+import { ReviewItems } from "./components/ReviewItems";
 import { useStyle } from "./components/Style";
 import React, { useState } from "react";
 
