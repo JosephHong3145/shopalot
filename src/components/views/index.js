@@ -9,5 +9,6 @@ export { MyProfileView } from "./MyProfileView";
 export { NotFoundView } from "./NotFoundView";
 export { OrderConfirmationView } from "./OrderConfirmationView";
 export { ProfileView } from "./ProfileView";
+export { CheckoutView } from "./paymentviews/CheckoutView";
 export { EditItemView } from "./EditItemView";
 export { MyOrdersView } from "./MyOrdersView";
