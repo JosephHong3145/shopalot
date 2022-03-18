@@ -1,50 +1,52 @@
-export const template = () => {
-  const formId = "shipping";
-  const formField = {
+export default {
+  formId: "addressPaymentForm",
+  formField: {
     first: {
       name: "first",
       label: "First name*",
-      requiredErrorMsg: "Required",
+      errorMsg: "Required",
     },
     last: {
       name: "last",
       label: "Last name*",
-      requiredErrorMsg: "Required",
+      errorMsg: "Required",
     },
     address: {
       name: "address",
       label: "Address line 1*",
-      requiredErrorMsg: "Required",
+      errorMsg: "Required",
     },
     extra: {
       name: "extra",
       label: "Address line 2",
-      requiredErrorMsg: "Required",
     },
     city: {
       name: "city",
       label: "City*",
-      requiredErrorMsg: "Required",
+      errorMsg: "Required",
     },
     province: {
       name: "province",
       label: "Province*",
-      requiredErrorMsg: "Required",
+      errorMsg: "Required",
     },
     country: {
       name: "country",
       label: "country*",
-      requiredErrorMsg: "Required",
+      errorMsg: "Required",
     },
     postal: {
       name: "postal",
-      label: "Zip code*",
-      requiredErrorMsg: "Required",
+      label: 'Postal code ("X1X 1X1")*',
+      errorMsg: "Required",
+      // invalidMsg: 'Please enter your postal code using a "X0X0X0" format.',
     },
     phone: {
       name: "phone",
       label: "Phone number*",
-      requiredErrorMsg: "Required",
+      errorMsg: "Required",
+      // invalidMsg:
+      //  "Please enter your phone number without any space and characters.",
     },
     useSameAddress: {
       name: "useSameAddress",
@@ -53,22 +55,24 @@ export const template = () => {
     cardHolder: {
       name: "cardholder",
       label: "Cardholder name*",
-      requiredErrorMsg: "Required",
+      errorMsg: "Required",
     },
     card: {
       name: "card",
       label: "Card number*",
-      requiredErrorMsg: "Required",
+      errorMsg: "Required",
+      // invalidMsg: "Please enter your card number without any space.",
     },
     expiration: {
       name: "expi",
-      label: "Expiration*",
-      requiredErrorMsg: "Required",
+      label: "Expiration (MMYY)*",
+      errorMsg: "Required",
     },
     ccv: {
       name: "ccv",
       label: "CCV*",
-      requiredErrorMsg: "Required",
+      errorMsg: "Required",
+      // invalidMsg: "Please enter the three numbers of your CCV (ex: 092).",
     },
-  };
+  },
 };

@@ -1,14 +1,14 @@
+import { TextField } from "@mui/material";
 import { at } from "lodash";
-import { TextField } from "@material-ui/core";
 import { useField } from "formik";
 import React from "react";
 
-export default function InputField(props) {
+export function Field(props) {
   const { errorText, ...rest } = props;
   const [field, meta] = useField(props);
 
-  function _renderHelperText() {
-    const [touched, error] = at(meta, 'touched', 'error');
+  function helperText() {
+    const [touched, error] = at(meta, "touched", "error");
     if (touched && error) {
       return error;
     }
@@ -18,9 +18,9 @@ export default function InputField(props) {
     <TextField
       type="text"
       error={meta.touched && meta.error && true}
-      helperText={_renderHelperText()}
+      helperText={helperText()}
       {...field}
       {...rest}
     />
   );
-};
+}

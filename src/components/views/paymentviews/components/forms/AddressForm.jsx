@@ -1,0 +1,62 @@
+import { Check } from "../formBuilder/Check";
+import { Field } from "../formBuilder/Field";
+import { Grid, Typography } from "@mui/material";
+import React from "react";
+
+export function AddressForm(props) {
+  const {
+    formField: {
+      first,
+      last,
+      address,
+      extra,
+      city,
+      province,
+      country,
+      postal,
+      phone,
+      useSameAddress,
+    },
+  } = props;
+
+  return (
+    <React.Fragment>
+      <Typography variant="h6">
+        Shipping address
+        <p></p>
+      </Typography>
+      <Grid container spacing={3}>
+        <Grid item xs={12} sm={6}>
+          <Field name={first.name} label={first.label} fullWidth />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Field name={last.name} label={last.label} fullWidth />
+        </Grid>
+        <Grid item xs={12}>
+          <Field name={address.name} label={address.label} fullWidth />
+        </Grid>
+        <Grid item xs={12}>
+          <Field name={extra.name} label={extra.label} fullWidth />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Field name={city.name} label={city.label} fullWidth />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Field name={province.name} label={province.label} fullWidth />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Field name={postal.name} label={postal.label} fullWidth />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Field name={country.name} label={country.label} fullWidth />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Field name={phone.name} label={phone.label} fullWidth />
+        </Grid>
+        <Grid item xs={12}>
+          <Check name={useSameAddress.name} label={useSameAddress.label} />
+        </Grid>
+      </Grid>
+    </React.Fragment>
+  );
+}
