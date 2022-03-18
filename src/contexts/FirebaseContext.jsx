@@ -1,4 +1,7 @@
 import { getAnalytics } from "firebase/analytics";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 import { initializeApp } from "firebase/app";
 import React from "react";
 
@@ -9,7 +12,10 @@ const FirebaseContext = React.createContext();
 export const FirebaseContextProvider = ({ children }) => {
   const app = initializeApp(Config.Firebase());
   const analytics = getAnalytics(app);
-  const value = { app, analytics };
+  const firestore = getFirestore(app);
+  const auth = getAuth(app);
+  const storage = getStorage(app);
+  const value = { app, analytics, firestore, storage, auth };
   return (
     <FirebaseContext.Provider value={value}>
       {children}

@@ -7,10 +7,12 @@ import {
 import React from "react";
 
 import {
+  EditItemView,
   HomeView,
   ItemView,
   ItemsView,
   LoginView,
+  MyOrdersView,
   MyProfileView,
   NotFoundView,
   OrderConfirmationView,
@@ -44,14 +46,57 @@ export const Routes = () => {
           </RequireAuth>
         }
       />
-      <Route exact path={Paths.items()} element={<ItemsView />} />
-      <Route exact path={Paths.item()} element={<ItemView />} />
       <Route
         exact
         path={Paths.orderConfirmation()}
         element={
           <RequireAuth>
             <OrderConfirmationView />
+          </RequireAuth>
+        }
+      />
+      <Route
+        exact
+        path={Paths.items()}
+        element={
+          <RequireAuth>
+            <ItemsView />
+          </RequireAuth>
+        }
+      />
+      <Route
+        exact
+        path={Paths.item()}
+        element={
+          <RequireAuth>
+            <ItemView />
+          </RequireAuth>
+        }
+      />
+      <Route
+        exact
+        path={Paths.createItem()}
+        element={
+          <RequireAuth>
+            <EditItemView />
+          </RequireAuth>
+        }
+      />
+      <Route
+        exact
+        path={Paths.editItem()}
+        element={
+          <RequireAuth>
+            <EditItemView />
+          </RequireAuth>
+        }
+      />
+      <Route
+        exact
+        path={Paths.myOrders()}
+        element={
+          <RequireAuth>
+            <MyOrdersView />
           </RequireAuth>
         }
       />
