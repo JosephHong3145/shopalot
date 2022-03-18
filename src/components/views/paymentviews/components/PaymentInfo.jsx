@@ -1,6 +1,6 @@
 import React from "react";
 import { Typography, Grid } from "@material-ui/core";
-import useStyles from "./styles";
+import useStyles from "./Style";
 
 export function PaymentDetails(props) {
   const { formValues } = props;
