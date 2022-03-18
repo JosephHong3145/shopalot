@@ -16,6 +16,7 @@ import {
   MyOrdersView,
   MyProfileView,
   NotFoundView,
+  OrderConfirmationView,
   ProfileView,
   SignupView,
 } from "./components/views";
@@ -52,6 +53,15 @@ export const Routes = () => {
         element={
           <RequireAuth>
             <MyCartView />
+          </RequireAuth>
+        }
+      />
+      <Route
+        exact
+        path={Paths.orderConfirmation()}
+        element={
+          <RequireAuth>
+            <OrderConfirmationView />
           </RequireAuth>
         }
       />
