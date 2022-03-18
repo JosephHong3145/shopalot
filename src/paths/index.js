@@ -7,6 +7,7 @@ class Parts {
   static login = "login";
   static orderConfirmation = "order-confirmation";
   static createItem = "create-item";
+  static myCartView = "my-cart";
   static editItem = "edit-item";
   static myOrders = "my-orders";
 }
@@ -25,6 +26,7 @@ export class Paths {
   static login = () => `/${Parts.login}`;
   static orderConfirmation = () => `/${Parts.orderConfirmation}`;
   static createItem = () => `/${Parts.createItem}`;
+  static myCartView = () => `/${Parts.myCartView}`;
   static editItem = (itemId) => `/${Parts.editITem}/${Paths.itemPath(itemId)}`;
   static myOrders = () => `/${Parts.myOrders}`;
 }

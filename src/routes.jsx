@@ -12,6 +12,7 @@ import {
   ItemView,
   ItemsView,
   LoginView,
+  MyCartView,
   MyOrdersView,
   MyProfileView,
   NotFoundView,
@@ -43,6 +44,15 @@ export const Routes = () => {
         element={
           <RequireAuth>
             <MyProfileView />
+          </RequireAuth>
+        }
+      />
+      <Route
+        exact
+        path={Paths.myCartView()}
+        element={
+          <RequireAuth>
+            <MyCartView />
           </RequireAuth>
         }
       />
