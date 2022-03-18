@@ -1,7 +1,7 @@
 import { Grid, Typography } from "@mui/material";
 import { useFormikContext } from "formik";
 import { AddressInfo } from "./AddressInfo";
-import { PaymentInfo } from "/PaymentInfo";
+import { PaymentInfo } from "./PaymentInfo";
 import React from "react";
 
 const placeholder = {
