@@ -5,9 +5,10 @@ class Parts {
   static items = "items";
   static signup = "signup";
   static login = "login";
-  static payment = "payment";
   static createItem = "create-item";
   static editItem = "edit-item";
+  static payment = "payment";
+  static editAddress = "edit-address";
   static myOrders = "my-orders";
 }
 
@@ -25,6 +26,7 @@ export class Paths {
   static login = () => `/${Parts.login}`;
 
   static payment = () => `/${Parts.payment}`;
+
   static createItem = () => `/${Parts.createItem}`;
   static editItem = (itemId) => `/${Parts.editITem}/${Paths.itemPath(itemId)}`;
   static myOrders = () => `/${Parts.myOrders}`;
