@@ -1,5 +1,5 @@
 import { Grid, Typography } from "@mui/material";
-import { useFormixContext } from "formik";
+import { useFormikContext } from "formik";
 import { AddressInfo } from "./AddressInfo";
 import { PaymentInfo } from "/PaymentInfo";
 import React from "react";
