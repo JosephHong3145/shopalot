@@ -5,10 +5,11 @@ class Parts {
   static items = "items";
   static signup = "signup";
   static login = "login";
+  static orderConfirmation = "order-confirmation";
   static createItem = "create-item";
+  static myCartView = "my-cart";
   static editItem = "edit-item";
   static payment = "payment";
-  static editAddress = "edit-address";
   static myOrders = "my-orders";
 }
 
@@ -27,7 +28,9 @@ export class Paths {
 
   static payment = () => `/${Parts.payment}`;
 
+  static orderConfirmation = () => `/${Parts.orderConfirmation}`;
   static createItem = () => `/${Parts.createItem}`;
+  static myCartView = () => `/${Parts.myCartView}`;
   static editItem = (itemId) => `/${Parts.editITem}/${Paths.itemPath(itemId)}`;
   static myOrders = () => `/${Parts.myOrders}`;
 }
