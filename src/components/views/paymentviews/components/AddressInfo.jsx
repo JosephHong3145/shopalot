@@ -2,7 +2,7 @@ import { Typography, Grid } from '@material-ui/core';
 import useStyles from './styles';
 import React from "react";
 
-export function ShippingDetails(props) {
+export function AddressInfo(props) {
   const { formValues } = props;
   const classes = useStyles();
   const { first, last, address } = formValues;
@@ -12,8 +12,9 @@ export function ShippingDetails(props) {
       <Typography variant="h6" gutterBottom className={classes.title}>
         Shipping
       </Typography>
-      <Typography gutterBottom>{`${first} ${last}`}</Typography>
-      <Typography gutterBottom>{`${address}`}</Typography>
+        <Typography gutterBottom>{`${first} ${last}`}</Typography>
+        <Typography gutterBottom>{`${address}`}</Typography>
+      </Typography>
     </Grid>
   );
 }
