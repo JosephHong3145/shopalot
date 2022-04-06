@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  CircularProgress,
   Container,
   Grid,
   Paper,
@@ -22,56 +23,56 @@ import { getAuth, signOut } from "firebase/auth";
 import React from "react";
 
 import { Controller, useForm } from "react-hook-form";
+import { doc, setDoc } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useAuthState } from "../../contexts/AuthContext";
+import { useDocumentData } from "react-firebase-hooks/firestore";
 import { useFirebase } from "../../contexts/FirebaseContext";
+import { v4 as uuidv4 } from "uuid";
 
-export const MyProfileView = () => {
-  const { app } = useFirebase();
-  const auth = getAuth(app);
-  const { user } = useAuthState();
+const ProfileForm = ({ db, storage, user, userData }) => {
   const [isEditMode, setIsEditMode] = React.useState(false);
+  const [imageURL, setImageURL] = React.useState("");
   const form = useForm({
     mode: "all",
     reValidateMode: "onChange",
     defaultValues: {
-      imageURL:
-        "https://di2ponv0v5otw.cloudfront.net/posts/2018/07/10/5b45a8162140f3f8d4b2e9b2/m_5b45a818534ef923d7f95f2c.jpeg",
-      userDescription:
-        "The FitnessGram Pacer Test is a multistage aerobic capacity test that progressively gets more difficult as it continues. The 20 meter pacer test will begin in 30 seconds. Line up at the start. The running speed starts slowly but gets faster each minute after you hear this signal bodeboop. A sing lap should be completed every time you hear this sound. ding Remember to run in a straight line and run as long as possible. The second time you fail to complete a lap before the sound, your test is over. The test will begin on the word start. On your mark. Get ready!… Start. ding",
-      reputation: 5,
-      phone: "123-456-7890",
-      email: "john.doe@gmail.com",
-      address: "3145 Broadway blvd. ",
-      userEntity: "user",
+      imageRef: userData?.imageRef ?? "",
+      userDescription: userData?.userDescription ?? "",
+      phone: userData?.phone ?? "",
+      email: userData?.email ?? "",
+      address: userData?.address ?? "",
+      userEntity: userData?.userEntity ?? "Customer",
     },
   });
 
-  // eslint-disable-next-line no-console
-  console.log(form);
-  const { handleSubmit, control, setError } = form;
+  const { handleSubmit, control, setError, errors, reset, watch } = form;
+  const imageRef = watch("imageRef");
+  React.useEffect(() => {
+    if (imageRef) {
+      getDownloadURL(ref(storage, imageRef)).then((url) => {
+        setImageURL(url);
+      });
+    }
+  });
 
   const editProfile = (event) => {
     setIsEditMode(true);
-
-    // eslint-disable-next-line no-console
-    console.log("Edit mode: " + isEditMode);
   };
 
-  const saveProfile = (event) => {
+  const saveProfile = () => {
     setIsEditMode(false);
-
-    // eslint-disable-next-line no-console
-    console.log("Edit mode: " + isEditMode);
   };
 
   const cancelSaveProfile = (event) => {
+    reset();
     setIsEditMode(false);
-
-    // eslint-disable-next-line no-console
-    console.log("Edit mode: " + isEditMode);
   };
 
-  const onSubmit = (form) => {};
+  const onSubmit = async (data) => {
+    await setDoc(doc(db, "users", user.uid), data);
+    saveProfile();
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -80,17 +81,52 @@ export const MyProfileView = () => {
           <Grid container spacing={2}>
             <Grid item xs={3}>
               <Controller
-                name="imageURL"
+                name="imageRef"
                 control={control}
                 render={({
                   field: { onChange, value },
                   fieldState: { error },
                 }) => (
-                  <Box
-                    component="img"
-                    sx={{ width: 1, borderRadius: 2 }}
-                    src={value}
-                  />
+                  <Box>
+                    <Box
+                      component="img"
+                      sx={{ width: 1, borderRadius: 2 }}
+                      src={imageURL}
+                    />
+                    {isEditMode && (
+                      <Box mt={2} display="flex" alignItems="center">
+                        <input
+                          accept="image/*"
+                          hidden
+                          id="raised-button-file"
+                          multiple
+                          type="file"
+                          onChange={async (event) => {
+                            const name = event.target.files[0].name;
+                            const uuid = uuidv4();
+                            const storageRef = ref(storage, uuid);
+                            uploadBytes(
+                              storageRef,
+                              await event.target.files[0].arrayBuffer()
+                            ).then(() => {
+                              onChange(uuid);
+                            });
+                          }}
+                        />
+                        <label htmlFor="raised-button-file">
+                          <Box mr={2}>
+                            <Button
+                              variant="contained"
+                              component="span"
+                              sx={{ width: 200, height: 50 }}
+                            >
+                              Choose Image
+                            </Button>
+                          </Box>
+                        </label>
+                      </Box>
+                    )}
+                  </Box>
                 )}
               />
             </Grid>
@@ -103,25 +139,39 @@ export const MyProfileView = () => {
                     </Typography>
                   </Box>
                   <Box mt={1} mb={1} align="bottom">
-                    <FormControl>
-                      <FormLabel id="UserType">User Type:</FormLabel>
-                      <RadioGroup
-                        row
-                        aria-labelledby="UserType"
-                        name="changeUserType"
-                      >
-                        <FormControlLabel
-                          value="Vendor"
-                          control={<Radio />}
-                          label="Vendor"
-                        />
-                        <FormControlLabel
-                          value="Customer"
-                          control={<Radio />}
-                          label="Customer"
-                        />
-                      </RadioGroup>
-                    </FormControl>
+                    <Controller
+                      name="userEntity"
+                      control={control}
+                      rules={{
+                        required: "Phone number required. ",
+                      }}
+                      render={({
+                        field: { onChange, value },
+                        fieldState: { error },
+                      }) => (
+                        <FormControl>
+                          <FormLabel id="UserType">User Type:</FormLabel>
+                          <RadioGroup
+                            row
+                            aria-labelledby="UserType"
+                            name="changeUserType"
+                            value={value}
+                            onChange={(event) => onChange(event.target.value)}
+                          >
+                            <FormControlLabel
+                              value="Vendor"
+                              control={<Radio disabled={!isEditMode} />}
+                              label="Vendor"
+                            />
+                            <FormControlLabel
+                              value="Customer"
+                              control={<Radio disabled={!isEditMode} />}
+                              label="Customer"
+                            />
+                          </RadioGroup>
+                        </FormControl>
+                      )}
+                    />
                   </Box>
                   <Box mt={1} mb={1} display="flex" flexdirection="column">
                     <Controller
@@ -227,12 +277,7 @@ export const MyProfileView = () => {
               {isEditMode ? (
                 <Box>
                   <Box display="flex" flexdirection="column">
-                    <Button
-                      fullWidth
-                      type="submit"
-                      variant="contained"
-                      onClick={saveProfile}
-                    >
+                    <Button fullWidth type="submit" variant="contained">
                       Save
                     </Button>
                   </Box>
@@ -255,18 +300,29 @@ export const MyProfileView = () => {
             </Grid>
           </Grid>
         </Box>
-        <Box display="flex" flexdirection="column">
-          <Grid item xs={2}>
-            {isEditMode ? (
-              <Box></Box>
-            ) : (
-              <Button fullWidth variant="contained" onClick={editProfile}>
-                Add Item
-              </Button>
-            )}
-          </Grid>
-        </Box>
       </Container>
     </form>
+  );
+};
+
+export const MyProfileView = () => {
+  const { firestore: db, storage } = useFirebase();
+  const { user } = useAuthState();
+  const [userData, loading] = useDocumentData(doc(db, "users", user.uid));
+  return (
+    <Box>
+      {loading ? (
+        <Box display="flex" justifyContent="center">
+          <CircularProgress />
+        </Box>
+      ) : (
+        <ProfileForm
+          db={db}
+          storage={storage}
+          user={user}
+          userData={userData}
+        />
+      )}
+    </Box>
   );
 };
