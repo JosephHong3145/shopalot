@@ -1,24 +1,15 @@
 /* eslint-disable prettier/prettier */
 import {
   Box,
-  Button,
+
   Container,
   Grid,
-  Paper,
-  TextField,
+
   Typography,
 } from "@mui/material";
-import { Controller, useForm } from "react-hook-form";
-import { getAuth, signOut } from "firebase/auth";
-import { useAuthState } from "../../contexts/AuthContext";
-import { useFirebase } from "../../contexts/FirebaseContext";
-import FormControl from "@mui/material/FormControl";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormLabel from "@mui/material/FormLabel";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-import React from "react";
 
+import React from "react";
+import map from './map2.png';
 export const AboutUs = () => {
   return (
     <Container maxWidth="md">
@@ -41,8 +32,14 @@ export const AboutUs = () => {
       <Grid container spacing={2}>
         <Grid item xs={6}>
           <Typography>
+
           <b>Map here</b>
+
           </Typography>
+          <a href = "https://goo.gl/maps/MH4h6aPnuHDWuada6" >
+          <img  src={map} alt="map" />
+          </a>
+
           </Grid>
            <Grid item xs={6}>
              <Typography variant="h5">
@@ -55,7 +52,7 @@ export const AboutUs = () => {
                <b>Telephone Number: +1 514 997 6488</b>
                </Typography>
                <Typography >
-               <b>Email: Shopalot@gmail.com </b>
+               <b>Email: Shopalot@gmail.com  </b>
                </Typography>
                </Grid>
                </Grid>
