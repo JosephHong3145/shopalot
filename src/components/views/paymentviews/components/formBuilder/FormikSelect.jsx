@@ -5,8 +5,6 @@ import React from "react";
 export function FormikSelect(props) {
   const { errorText, label, options, ...rest } = props;
   const [field, meta, helper] = useField(props);
-  console.log(field, meta, helper);
-  console.log(props);
 
   function _onChange(e) {
     helper.setValue(e.target.value);

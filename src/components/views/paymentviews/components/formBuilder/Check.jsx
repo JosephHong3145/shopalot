@@ -14,7 +14,7 @@ export function Check(props) {
   const { setValue } = helper;
   React.useEffect(() => {
     onDisabledChange(field.value);
-  }, [field.value]);
+  }, [field.value, onDisabledChange]);
 
   function _renderHelperText() {
     const [touched, error] = at(meta, "touched", "error");
