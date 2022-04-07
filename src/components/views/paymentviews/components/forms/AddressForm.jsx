@@ -1,7 +1,16 @@
-import { Check } from "../formBuilder/Check";
 import { Field } from "../formBuilder/Field";
-import { Grid, Typography } from "@mui/material";
+import {
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  Typography,
+} from "@mui/material";
+import { FormikSelect } from "../formBuilder/FormikSelect";
 import React from "react";
+
+// query for the user ID that is currently logged in
 
 export function AddressForm(props) {
   const {
@@ -15,7 +24,7 @@ export function AddressForm(props) {
       country,
       postal,
       phone,
-      useSameAddress,
+      deliveryOption,
     },
   } = props;
 
@@ -53,8 +62,17 @@ export function AddressForm(props) {
         <Grid item xs={12} sm={6}>
           <Field name={phone.name} label={phone.label} fullWidth />
         </Grid>
-        <Grid item xs={12}>
-          <Check name={useSameAddress.name} label={useSameAddress.label} />
+        <Grid item xs={12} sm={6}>
+          <FormikSelect
+            name={deliveryOption.name}
+            label={deliveryOption.label}
+            options={[
+              { key: "Shopalot Prime", value: 0 },
+              { key: "Next-Day Shipping", value: 1 },
+              { key: "Two-Day Shipping", value: 2 },
+              { key: "Regular Shipping (7-days)", value: 7 },
+            ]}
+          />
         </Grid>
       </Grid>
     </React.Fragment>

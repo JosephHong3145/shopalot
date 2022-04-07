@@ -418,6 +418,7 @@ export const ItemView = () => {
       seller: item.seller,
       price: price,
       userId: user.uid,
+      itemProcessingDelay: item.orderProcessingDelay,
     };
     addDoc(collection(db, "cart"), _item);
   };

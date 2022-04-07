@@ -1,51 +1,37 @@
-import { Grid, Typography } from "@mui/material";
+import { Box, Grid, Paper, Typography } from "@mui/material";
 import { useStyle } from "../Style";
 import React from "react";
 
 export function PaymentInfo(props) {
   const { formValues = "empty" } = props || {};
   const classes = useStyle();
-  const { cardHolder, card, expiration } = formValues;
+  const { cardHolderFirst, cardHolderLast, card, expiration } = formValues;
 
   return (
-    <Grid item container direction="column" xs={12} sm={6}>
-      <Typography variant="h5" gutterBottom className={classes.title}>
-        Payment details
+    <Box sx={{ height: 300 }}>
+      <Typography variant="h6" gutterBottom>
+        <b>Billing</b>
       </Typography>
-      <Grid container>
-        <div>
-          <Grid item xs={6}>
-            <Typography gutterBottom>Card type</Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography gutterBottom>Visa</Typography>
-          </Grid>
-        </div>
-        <div>
-          <Grid item xs={6}>
-            <Typography gutterBottom>Card holder</Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography gutterBottom>{cardHolder}</Typography>
-          </Grid>
-        </div>
-        <div>
-          <Grid item xs={6}>
-            <Typography gutterBottom>Card number</Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography gutterBottom>{card}</Typography>
-          </Grid>
-        </div>
-        <div>
-          <Grid item xs={6}>
-            <Typography gutterBottom>Expiry Date</Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography gutterBottom>{expiration}</Typography>
-          </Grid>
-        </div>
-      </Grid>
-    </Grid>
+      <Box mt={2} sx={{ height: 1 }}>
+        <Paper variant="outlined" sx={{ height: 1 }}>
+          <Box p={2}>
+            <Typography variant="body1" gutterBottom align="left">
+              <b>{`Cardholder Name: `}</b>
+            </Typography>
+            <Typography
+              variant="body1"
+              gutterBottom
+              align="left"
+            >{`${cardHolderFirst} ${cardHolderLast}`}</Typography>
+            <Typography variant="body1" gutterBottom align="left">
+              <b>{`Card Info: `}</b>
+            </Typography>
+            <Typography variant="body1" gutterBottom align="left">
+              {`${card} (${expiration})`}
+            </Typography>
+          </Box>
+        </Paper>
+      </Box>
+    </Box>
   );
 }

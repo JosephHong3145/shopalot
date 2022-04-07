@@ -48,13 +48,22 @@ export default {
       // invalidMsg:
       //  "Please enter your phone number without any space and characters.",
     },
+    deliveryOption: {
+      name: "shipping",
+      label: "Delivery Option",
+    },
     useSameAddress: {
       name: "useSameAddress",
-      label: "Same address for as for shipping.",
+      label: "Use the shipping address for billing.",
     },
-    cardHolder: {
-      name: "cardholder",
-      label: "Cardholder name*",
+    cardHolderFirst: {
+      name: "cardHolderFirst",
+      label: "Cardholder's first name*",
+      errorMsg: "Required",
+    },
+    cardHolderLast: {
+      name: "cardHolderLast",
+      label: "Cardholder's last name*",
       errorMsg: "Required",
     },
     card: {
@@ -64,7 +73,7 @@ export default {
       // invalidMsg: "Please enter your card number without any space.",
     },
     expiration: {
-      name: "expi",
+      name: "expiration",
       label: "Expiration (MMYY)*",
       errorMsg: "Required",
     },
@@ -73,6 +82,35 @@ export default {
       label: "CCV*",
       errorMsg: "Required",
       // invalidMsg: "Please enter the three numbers of your CCV (ex: 092).",
+    },
+    billingAddress: {
+      name: "address",
+      label: "Address line 1*",
+      errorMsg: "Required",
+    },
+    billingExtra: {
+      name: "extra",
+      label: "Address line 2",
+    },
+    billingCity: {
+      name: "city",
+      label: "City*",
+      errorMsg: "Required",
+    },
+    billingProvince: {
+      name: "province",
+      label: "Province*",
+      errorMsg: "Required",
+    },
+    billingCountry: {
+      name: "country",
+      label: "Country*",
+      errorMsg: "Required",
+    },
+    billingPostal: {
+      name: "postal",
+      label: 'Postal code ("X1X 1X1")*',
+      errorMsg: "Required",
     },
   },
 };

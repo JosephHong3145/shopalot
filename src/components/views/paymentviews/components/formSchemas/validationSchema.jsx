@@ -11,7 +11,8 @@ const {
     country,
     postal,
     phone,
-    cardHolder,
+    cardHolderFirst,
+    cardHolderLast,
     card,
     expiration,
     ccv,
@@ -35,7 +36,10 @@ export default [
   }),
   // Payment info checker
   Yup.object().shape({
-    [cardHolder.name]: Yup.string().required(`${cardHolder.errorMsg}`),
+    [cardHolderFirst.name]: Yup.string().required(
+      `${cardHolderFirst.errorMsg}`
+    ),
+    [cardHolderLast.name]: Yup.string().required(`${cardHolderLast.errorMsg}`),
     [card.name]: Yup.string()
       .required(`${card.errorMsg}`)
       .matches(cardRegex, card.invalidError),
