@@ -45,31 +45,18 @@ export const MyProfileView = () => {
       userEntity: "user",
     },
   });
-
-  // eslint-disable-next-line no-console
-  console.log(form);
   const { handleSubmit, control, setError } = form;
-  console.log(control);
 
   const editProfile = (event) => {
     setIsEditMode(true);
-
-    // eslint-disable-next-line no-console
-    console.log("Edit mode: " + isEditMode);
   };
 
   const saveProfile = (event) => {
     setIsEditMode(false);
-
-    // eslint-disable-next-line no-console
-    console.log("Edit mode: " + isEditMode);
   };
 
   const cancelSaveProfile = (event) => {
     setIsEditMode(false);
-
-    // eslint-disable-next-line no-console
-    console.log("Edit mode: " + isEditMode);
   };
 
   const onSubmit = (form) => {};
