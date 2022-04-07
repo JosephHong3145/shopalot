@@ -205,22 +205,26 @@ export const MyCartView = () => {
   return (
     <Container size="md">
       {items ? (
-        <Box>
-          <Typography variant="h2" gutterBottom component="div">
+        <Box mt={3}>
+          <Typography variant="h3" gutterBottom component="div">
             Shopping Cart
           </Typography>
           <Grid container spacing={2}>
             <Grid item xs={9}>
               <Box component={Paper} variant="outlined" padding={2}>
-                {items.map((item, i) => (
-                  <ItemComponent
-                    key={item.id}
-                    item={item}
-                    i={i}
-                    db={db}
-                    storage={storage}
-                  />
-                ))}
+                {items.length > 0 ? (
+                  items.map((item, i) => (
+                    <ItemComponent
+                      key={item.id}
+                      item={item}
+                      i={i}
+                      db={db}
+                      storage={storage}
+                    />
+                  ))
+                ) : (
+                  <Typography>No items are in the shopping card</Typography>
+                )}
               </Box>
             </Grid>
             <Grid item xs={3}>
@@ -240,7 +244,7 @@ export const MyCartView = () => {
                         .toFixed(2)}
                   </Typography>
                 </Box>
-                <Link to="/payment">
+                <Link to="/payment" style={{ textDecoration: "none" }}>
                   <Button type="button" variant="contained" fullWidth>
                     Proceed to Checkout
                   </Button>

@@ -15,6 +15,7 @@ import { ReviewItems } from "./components/views/ReviewItems";
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDocs,
   query,
@@ -65,13 +66,13 @@ export function PaymentView(props) {
     query(collection(db, "billing"), where("userId", "==", user.uid))
   );
   const billingData = billingSnapshot
-    ? billingSnapshot?.docs[0].data()
+    ? billingSnapshot?.docs[0]?.data()
     : undefined;
   const [shippingSnapshot, shippingLoading] = useCollection(
     query(collection(db, "shipping"), where("userId", "==", user.uid))
   );
   const shippingData = shippingSnapshot
-    ? shippingSnapshot?.docs[0].data()
+    ? shippingSnapshot?.docs[0]?.data()
     : undefined;
   const [value] = useCollection(
     query(collection(db, "cart"), where("userId", "==", user.uid))
@@ -106,11 +107,6 @@ export function PaymentView(props) {
     }
   };
 
-  const current = new Date();
-  const today = `${current.getDate()}/${
-    current.getMonth() + 1
-  }/${current.getFullYear()}`;
-
   const classes = useStyle();
   const [activeStep, setActiveStep] = useState(0);
   const currentValidationSchema = validationSchema[activeStep];
@@ -126,8 +122,18 @@ export function PaymentView(props) {
     );
     const _order = {
       userID: user.uid,
-      date: today,
-      estimatedArrivalDate: deliveryDate,
+      orderDate: new Date().toLocaleDateString("en-US", {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      }),
+      arrivalDate: deliveryDate.toLocaleDateString("en-US", {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      }),
       cost: _cost,
       items: _items?.map((item) => ({
         filters: [...item.filters],
@@ -166,13 +172,24 @@ export function PaymentView(props) {
       country: values.useSameAddress ? values.country : values.billingCountry,
       postal: values.useSameAddress ? values.postal : values.billingPostal,
     };
-    const uuid = uuidv4();
     await addDoc(collection(db, "orders"), _order);
-    await setDoc(
-      doc(db, "shipping", shippingSnapshot.docs[0].id),
-      _shippingData
-    );
-    await setDoc(doc(db, "billing", billingSnapshot.docs[0].id), _billingData);
+    if (!shippingSnapshot?.docs[0]?.id) {
+      await addDoc(collection(db, "shipping"), _shippingData);
+    } else {
+      await setDoc(
+        doc(db, "shipping", shippingSnapshot.docs[0].id),
+        _shippingData
+      );
+    }
+    if (!billingSnapshot?.docs[0]?.id) {
+      await addDoc(collection(db, "billing"), _billingData);
+    } else {
+      await setDoc(
+        doc(db, "billing", billingSnapshot.docs[0].id),
+        _billingData
+      );
+    }
+    _items?.forEach((item) => deleteDoc(doc(db, "cart", item.id)));
     actions.setSubmitting(false);
     setActiveStep(activeStep + 1);
   }

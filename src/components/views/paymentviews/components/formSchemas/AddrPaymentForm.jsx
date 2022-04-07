@@ -32,7 +32,7 @@ export default {
     },
     country: {
       name: "country",
-      label: "country*",
+      label: "Country*",
       errorMsg: "Required",
     },
     postal: {
@@ -84,31 +84,31 @@ export default {
       // invalidMsg: "Please enter the three numbers of your CCV (ex: 092).",
     },
     billingAddress: {
-      name: "address",
+      name: "billingAddress",
       label: "Address line 1*",
       errorMsg: "Required",
     },
     billingExtra: {
-      name: "extra",
+      name: "billingExtra",
       label: "Address line 2",
     },
     billingCity: {
-      name: "city",
+      name: "billingCity",
       label: "City*",
       errorMsg: "Required",
     },
     billingProvince: {
-      name: "province",
+      name: "billingProvince",
       label: "Province*",
       errorMsg: "Required",
     },
     billingCountry: {
-      name: "country",
+      name: "billingCountry",
       label: "Country*",
       errorMsg: "Required",
     },
     billingPostal: {
-      name: "postal",
+      name: "billingPostal",
       label: 'Postal code ("X1X 1X1")*',
       errorMsg: "Required",
     },

@@ -38,7 +38,10 @@ const RequireAuth = ({ children }) => {
 export const Routes = () => {
   return (
     <Switch>
-      <Route path={Paths.home()} element={<HomeView />} />
+      <Route
+        path={Paths.home()}
+        element={<Navigate replace to={Paths.items()} />}
+      />
       <Route path={Paths.profile()} element={<ProfileView />} />
       <Route
         path={Paths.myProfile()}

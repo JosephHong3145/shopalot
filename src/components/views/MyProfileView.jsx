@@ -127,10 +127,11 @@ const ProfileForm = ({ db, storage, user, userData }) => {
             <Grid item xs={7}>
               <Paper variant="outlined" sx={{ height: 1 }}>
                 <Box mt={1} mb={1} mr={1} ml={1}>
-                  <Box mt={1} mb={1} display="flex" flexdirection="column">
+                  <Box mt={1} mb={1}>
                     <Typography variant="h4">
                       <b>{user.displayName}</b>
                     </Typography>
+                    <Typography variant="body1">{user.email}</Typography>
                   </Box>
                   <Box mt={1} mb={1} align="bottom">
                     <Controller
@@ -171,9 +172,6 @@ const ProfileForm = ({ db, storage, user, userData }) => {
                     <Controller
                       name="phone"
                       control={control}
-                      rules={{
-                        required: "Phone number required. ",
-                      }}
                       render={({
                         field: { onChange, value },
                         fieldState: { error },
@@ -193,35 +191,8 @@ const ProfileForm = ({ db, storage, user, userData }) => {
                   </Box>
                   <Box mt={1} mb={1} display="flex" flexdirection="column">
                     <Controller
-                      name="email"
-                      control={control}
-                      rules={{
-                        required: "Email required.",
-                      }}
-                      render={({
-                        field: { onChange, value },
-                        fieldState: { error },
-                      }) => (
-                        <TextField
-                          fullWidth
-                          label="Email"
-                          variant="outlined"
-                          value={value}
-                          error={!!error}
-                          helperText={error ? error.message : null}
-                          onChange={onChange}
-                          disabled={!isEditMode}
-                        />
-                      )}
-                    />
-                  </Box>
-                  <Box mt={1} mb={1} display="flex" flexdirection="column">
-                    <Controller
                       name="address"
                       control={control}
-                      rules={{
-                        required: "Address required. ",
-                      }}
                       render={({
                         field: { onChange, value },
                         fieldState: { error },
@@ -242,9 +213,6 @@ const ProfileForm = ({ db, storage, user, userData }) => {
                   <Controller
                     name="userDescription"
                     control={control}
-                    rules={{
-                      required: "User description required. ",
-                    }}
                     render={({
                       field: { onChange, value },
                       fieldState: { error },
