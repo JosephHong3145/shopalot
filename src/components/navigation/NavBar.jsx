@@ -130,6 +130,14 @@ export default function NavBar() {
       >
         Log Out
       </MenuItem>
+      <MenuItem
+        onClick={() => {
+          handleMenuClose();
+          navigate("/about-us");
+        }}
+      >
+        About Us
+      </MenuItem>
       {/* <MenuItem onClick={handleMenuClose}>
         <ListItemIcon>
           <Logout /> Sign Out

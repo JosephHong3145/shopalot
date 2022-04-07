@@ -11,6 +11,7 @@ class Parts {
   static editItem = "edit-item";
   static payment = "payment";
   static myOrders = "my-orders";
+  static aboutUs = "about-us";
 }
 
 export class Paths {
@@ -33,4 +34,5 @@ export class Paths {
   static myCartView = () => `/${Parts.myCartView}`;
   static editItem = (itemId) => `/${Parts.editItem}/${Paths.itemPath(itemId)}`;
   static myOrders = () => `/${Parts.myOrders}`;
+  static aboutUs = () => `/${Parts.aboutUs}`;
 }

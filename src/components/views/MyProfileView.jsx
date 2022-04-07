@@ -9,17 +9,11 @@ import {
   Typography,
 } from "@mui/material";
 
-// TODO:
-// Send and retrieve data to database
-// enclose mechanics in form and make onSubmit function
-
 import FormControl from "@mui/material/FormControl";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormLabel from "@mui/material/FormLabel";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
-
-import { getAuth, signOut } from "firebase/auth";
 import React from "react";
 
 import { Controller, useForm } from "react-hook-form";

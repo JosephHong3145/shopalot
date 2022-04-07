@@ -7,6 +7,7 @@ import {
 import React from "react";
 
 import {
+  AboutUs,
   CheckoutView,
   EditItemView,
   HomeView,
@@ -115,6 +116,7 @@ export const Routes = () => {
           </RequireAuth>
         }
       />
+      <Route exact path={Paths.aboutUs()} element={<AboutUs />} />
       {/* Authentication */}
       <Route path={Paths.signup()} element={<SignupView />} />
       <Route path={Paths.login()} element={<LoginView />} />
