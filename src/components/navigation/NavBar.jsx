@@ -13,29 +13,15 @@ import {
   styled,
 } from "@mui/material";
 import { Paths } from "../../paths";
+import { doc } from "firebase/firestore";
 import { signOut } from "firebase/auth";
 import { useAuthState } from "../../contexts/AuthContext";
+import { useDocumentData } from "react-firebase-hooks/firestore";
 import { useFirebase } from "../../contexts/FirebaseContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import BlurOnIcon from "@mui/icons-material/BlurOn";
 import Box from "@mui/material/Box";
 import React from "react";
-
-// const Search = styled("div")(({ theme }) => ({
-//   position: "relative",
-//   borderRadius: theme.shape.borderRadius,
-//   backgroundColor: alpha(theme.palette.common.white, 0.1),
-//   "&:hover": {
-//     backgroundColor: alpha(theme.palette.common.white, 0.25),
-//   },
-//   marginRight: theme.spacing(2),
-//   marginLeft: 0,
-//   width: "100%",
-//   [theme.breakpoints.up("sm")]: {
-//     marginLeft: theme.spacing(8),
-//     width: "50%",
-//   },
-// }));
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -61,8 +47,19 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
+const AuthenticatedCreateItemLink = ({ user, db, onClick }) => {
+  const [userData, loading] = useDocumentData(doc(db, "users", user.uid));
+  return (
+    <MenuItem onClick={onClick} disabled={userData?.userEntity !== "Vendor"}>
+      Create Item
+    </MenuItem>
+  );
+};
+
 export default function NavBar() {
   const { auth } = useFirebase();
+  const { firestore: db } = useFirebase();
+  const { user } = useAuthState();
   const { isAuthenticated } = useAuthState();
   const navigate = useNavigate();
   const location = useLocation();
@@ -112,12 +109,21 @@ export default function NavBar() {
       <MenuItem
         onClick={() => {
           handleMenuClose();
-          navigate(Paths.createItem());
+          navigate("/about-us");
         }}
-        disabled={!isAuthenticated}
       >
-        Create Item
+        About Us
       </MenuItem>
+      {user && (
+        <AuthenticatedCreateItemLink
+          user={user}
+          db={db}
+          onClick={() => {
+            handleMenuClose();
+            navigate(Paths.createItem());
+          }}
+        />
+      )}
       <MenuItem
         onClick={() => {
           handleMenuClose();
@@ -135,14 +141,6 @@ export default function NavBar() {
         disabled={!isAuthenticated}
       >
         Log Out
-      </MenuItem>
-      <MenuItem
-        onClick={() => {
-          handleMenuClose();
-          navigate("/about-us");
-        }}
-      >
-        About Us
       </MenuItem>
       {/* <MenuItem onClick={handleMenuClose}>
         <ListItemIcon>

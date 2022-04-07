@@ -42,7 +42,10 @@ export default [
     [cardHolderLast.name]: Yup.string().required(`${cardHolderLast.errorMsg}`),
     [card.name]: Yup.string()
       .required(`${card.errorMsg}`)
-      .matches(cardRegex, card.invalidError),
+      .matches(
+        cardRegex,
+        "Card number must be 13 digits long and must start with '4'"
+      ),
     [expiration.name]: Yup.string().required(`${expiration.errorMsg}`),
     /* .test(
         val"len",

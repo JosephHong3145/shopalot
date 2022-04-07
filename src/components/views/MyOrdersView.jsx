@@ -111,20 +111,46 @@ const placeholder = {
   ],
 };
 
+const OrderItem = ({ item, storage }) => {
+  const [imageURL, setImageURL] = React.useState("");
+  React.useEffect(() => {
+    getDownloadURL(ref(storage, item.imageRef)).then((url) => {
+      setImageURL(url);
+    });
+  }, [imageURL, item, storage]);
+  return (
+    <Box
+      display="flex"
+      key={"item-" + item?.ID}
+      sx={{ height: 120 }}
+      p={1}
+      pt={0}
+    >
+      <Box component="img" sx={{ borderRadius: 2 }} src={imageURL} mr={2} />
+      <Box>
+        <Link href={"/items/" + item.ID} underline="none">
+          <Typography variant="h6">
+            <b>{item.name}</b>
+          </Typography>
+        </Link>
+        <Typography variant="subtitle1">
+          {"Quantity: " + item.quantity}
+        </Typography>
+        {item.filters.map((filter, i) => (
+          <Typography
+            variant="subtitle1"
+            key={"item-" + item.ID + "-filter-" + filter.name}
+          >
+            {filter.name + ": " + filter.value}
+          </Typography>
+        ))}
+      </Box>
+    </Box>
+  );
+};
+
 const Order = ({ order, db }) => {
   const { storage } = useFirebase();
-  const [imageURLs, setImageURLs] = React.useState(
-    Array.from({ length: order.items.length }, () => "")
-  );
-  React.useEffect(() => {
-    order.items.forEach((item, i) => {
-      getDownloadURL(ref(storage, item.imageRef)).then((url) => {
-        const newImageURLs = [...imageURLs];
-        newImageURLs[i] = url;
-        setImageURLs(newImageURLs);
-      });
-    });
-  }, [imageURLs, order.items, storage]);
   const { date, ID, cost, estimatedArrivalDate, items } = order;
   const cancelOrder = (_) => {
     deleteDoc(doc(db, "orders", order.ID));
@@ -138,39 +164,8 @@ const Order = ({ order, db }) => {
       <Box mb={1}>
         <Divider />
       </Box>
-      {items.map((item, i) => (
-        <Box
-          display="flex"
-          key={"item-" + item.ID}
-          sx={{ height: 120 }}
-          p={1}
-          pt={0}
-        >
-          <Box
-            component="img"
-            sx={{ borderRadius: 2 }}
-            src={imageURLs[i]}
-            mr={2}
-          />
-          <Box>
-            <Link href={"/items/" + item.ID} underline="none">
-              <Typography variant="h6">
-                <b>{item.name}</b>
-              </Typography>
-            </Link>
-            <Typography variant="subtitle1">
-              {"Quantity: " + item.quantity}
-            </Typography>
-            {item.filters.map((filter, i) => (
-              <Typography
-                variant="subtitle1"
-                key={"item-" + item.ID + "-filter-" + filter.name}
-              >
-                {filter.name + ": " + filter.value}
-              </Typography>
-            ))}
-          </Box>
-        </Box>
+      {items?.map((item) => (
+        <OrderItem key={item.ID} storage={storage} item={item} />
       ))}
       <Box
         display="flex"
@@ -224,7 +219,7 @@ export const MyOrdersView = () => {
           <CircularProgress />
         </Box>
       ) : (
-        <Box>
+        <Box mb={4}>
           <Box mt={2}>
             <Typography variant="h4">{"My Orders"}</Typography>
           </Box>
