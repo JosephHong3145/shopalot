@@ -1,32 +1,12 @@
 import { AddressInfo } from "../views/AddressInfo";
-import { Cart } from "./Cart";
-import { PaymentInfo } from "../views/PaymentInfo";
-import { Typography } from "@mui/material";
+import { Box, Divider, Grid, Typography } from "@mui/material";
+import { CartItem } from "./CartItem";
+import { PaymentInfo } from "./PaymentInfo";
+import { PricingInfo } from "./PricingInfo";
 import { useFormikContext } from "formik";
 import React from "react";
 
-/* const placeholder = {
-  cart: [
-    {
-      cost: 50.99,
-      items: [
-        {
-          ID: "1",
-          name: "Black Box",
-          imageRef:
-            "https://di2ponv0v5otw.cloudfront.net/posts/2018/07/10/5b45a8162140f3f8d4b2e9b2/m_5b45a818534ef923d7f95f2c.jpeg",
-          quantity: 3,
-          filters: [
-            { name: "Size", value: "12" },
-            { name: "Color", value: "Black" },
-          ],
-        },
-      ],
-    },
-  ],
-}; */
-
-export function ReviewItems() {
+export function ReviewItems({ items, cartCost, orderProcessingDelay }) {
   const { values: formValues } = useFormikContext();
 
   return (
@@ -35,12 +15,27 @@ export function ReviewItems() {
         Order summary
         <p></p>
       </Typography>
-      <div>
-        <Cart />
-      </div>
-      <AddressInfo formValues={formValues} />
-
-      <PaymentInfo formValues={formValues} />
+      <Box>
+        {items?.map((item) => (
+          <CartItem key={item.id} item={item} />
+        ))}
+      </Box>
+      <Box pb={5}>
+        <Grid container spacing={3}>
+          <Grid item xs={4}>
+            <AddressInfo
+              formValues={formValues}
+              orderProcessingDelay={orderProcessingDelay}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <PaymentInfo formValues={formValues} />
+          </Grid>
+          <Grid item xs={4}>
+            <PricingInfo formValues={formValues} cartCost={cartCost} />
+          </Grid>
+        </Grid>
+      </Box>
     </div>
   );
 }

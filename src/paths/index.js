@@ -32,7 +32,7 @@ export class Paths {
   static orderConfirmation = () => `/${Parts.orderConfirmation}`;
   static createItem = () => `/${Parts.createItem}`;
   static myCartView = () => `/${Parts.myCartView}`;
-  static editItem = (itemId) => `/${Parts.editITem}/${Paths.itemPath(itemId)}`;
+  static editItem = (itemId) => `/${Parts.editItem}/${Paths.itemPath(itemId)}`;
   static myOrders = () => `/${Parts.myOrders}`;
   static aboutUs = () => `/${Parts.aboutUs}`;
 }
