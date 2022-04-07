@@ -9,9 +9,12 @@ import { useField } from "formik";
 import React from "react";
 
 export function Check(props) {
-  const { label, ...rest } = props;
+  const { label, onDisabledChange, ...rest } = props;
   const [field, meta, helper] = useField(props);
   const { setValue } = helper;
+  React.useEffect(() => {
+    onDisabledChange(field.value);
+  }, [field.value]);
 
   function _renderHelperText() {
     const [touched, error] = at(meta, "touched", "error");
@@ -27,8 +30,8 @@ export function Check(props) {
   return (
     <FormControl {...rest}>
       <FormControlLabel
-        value={field.checked}
-        checked={field.checked}
+        value={field.value}
+        checked={field.value}
         control={<Checkbox {...field} onChange={_onChange} />}
         label={label}
       />

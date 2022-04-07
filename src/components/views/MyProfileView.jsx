@@ -49,7 +49,7 @@ export const MyProfileView = () => {
   // eslint-disable-next-line no-console
   console.log(form);
   const { handleSubmit, control, setError } = form;
-  console.log(control);
+  // console.log(control);
 
   const editProfile = (event) => {
     setIsEditMode(true);

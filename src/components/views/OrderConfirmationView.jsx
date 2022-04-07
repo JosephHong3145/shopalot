@@ -12,17 +12,17 @@ export const OrderConfirmationView = () => {
               <CheckCircleIcon color="primary" />
               <Box ml={"4px"}>
                 <Typography variant="h5" color="primary">
-                  Your order is placed, thanks.{" "}
+                  Your order is placed, thanks.
                 </Typography>
               </Box>
             </Box>
-            <Box marginLeft={4}>
-              <Typography variant="h12" marginBottom={20}>
-                Confirmation will be sent to your email.
+            <Box ml={4}>
+              <Typography variant="body1" gutterBottom>
+                {'Orders can be seen in the "My Orders" page.'}
               </Typography>
             </Box>
-            <Box marginLeft={3}>
-              <Button href="/my-orders" size="h10" marginLeft={3}>
+            <Box ml={3}>
+              <Button href="/my-orders" size="h10">
                 {"Review your orders"}
               </Button>
             </Box>

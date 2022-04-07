@@ -61,9 +61,11 @@ export const Routes = () => {
         exact
         path={Paths.payment()}
         element={
-          <RequireAuth>
-            <CheckoutView />
-          </RequireAuth>
+          <div>
+            <RequireAuth>
+              <CheckoutView />
+            </RequireAuth>
+          </div>
         }
       />
       <Route
