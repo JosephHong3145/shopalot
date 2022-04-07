@@ -92,7 +92,13 @@ export default function NavBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose} disabled={true}>
+      <MenuItem
+        onClick={() => {
+          handleMenuClose();
+          navigate(Paths.myProfile());
+        }}
+        disabled={!isAuthenticated}
+      >
         My Profile
       </MenuItem>
       <MenuItem
