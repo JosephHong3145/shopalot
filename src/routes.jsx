@@ -37,10 +37,9 @@ const RequireAuth = ({ children }) => {
 export const Routes = () => {
   return (
     <Switch>
-      <Route exact path={Paths.home()} element={<HomeView />} />
-      <Route exact path={Paths.profile()} element={<ProfileView />} />
+      <Route path={Paths.home()} element={<HomeView />} />
+      <Route path={Paths.profile()} element={<ProfileView />} />
       <Route
-        exact
         path={Paths.myProfile()}
         element={
           <RequireAuth>
@@ -49,7 +48,6 @@ export const Routes = () => {
         }
       />
       <Route
-        exact
         path={Paths.myCartView()}
         element={
           <RequireAuth>
@@ -78,7 +76,6 @@ export const Routes = () => {
         }
       />
       <Route
-        exact
         path={Paths.items()}
         element={
           <RequireAuth>
@@ -87,7 +84,6 @@ export const Routes = () => {
         }
       />
       <Route
-        exact
         path={Paths.item()}
         element={
           <RequireAuth>
@@ -96,7 +92,6 @@ export const Routes = () => {
         }
       />
       <Route
-        exact
         path={Paths.createItem()}
         element={
           <RequireAuth>
@@ -105,7 +100,6 @@ export const Routes = () => {
         }
       />
       <Route
-        exact
         path={Paths.editItem()}
         element={
           <RequireAuth>
@@ -114,7 +108,6 @@ export const Routes = () => {
         }
       />
       <Route
-        exact
         path={Paths.myOrders()}
         element={
           <RequireAuth>
@@ -123,8 +116,10 @@ export const Routes = () => {
         }
       />
       {/* Authentication */}
-      <Route exact path={Paths.signup()} element={<SignupView />} />
-      <Route exact path={Paths.login()} element={<LoginView />} />
+      <Route path={Paths.signup()} element={<SignupView />} />
+      <Route path={Paths.login()} element={<LoginView />} />
+      {/* Payment Flow while Making it */}
+      <Route path={Paths.payment()} element={<CheckoutView />} />
       {/* Default */}
       <Route path="*" element={<NotFoundView />} />
     </Switch>

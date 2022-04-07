@@ -22,7 +22,6 @@ import {
   Paper,
   Radio,
   Select,
-  Slide,
   Snackbar,
   Table,
   TableBody,
@@ -110,7 +109,7 @@ export const FilterList = (props) => {
 
 export const AddCategoryDialog = (props) => {
   const { open, onClose, onAddCategory } = props;
-  const [categoryName, setCategoryName] = React.useState([""]);
+  const [categoryName, setCategoryName] = React.useState("");
   const [filtersEnabled, setFiltersEnabled] = React.useState([false, false]);
   const [filtersNames, setFiltersNames] = React.useState(["", ""]);
   const [filtersOptions, setFiltersOptions] = React.useState([[], []]);
@@ -121,7 +120,7 @@ export const AddCategoryDialog = (props) => {
         (enabled, i) =>
           enabled && { name: filtersNames[i], options: filtersOptions[i] }
       )
-      .filter((x) => x !== false),
+      .filter((x) => typeof x !== "boolean"),
   };
   return (
     <Dialog open={open} onClose={onClose}>
@@ -432,6 +431,7 @@ export const EditItemView = () => {
   const onCategoryChange = (name, onChange) => {
     let newCategory = { name, filters: [] };
     if (name !== "None") {
+      // @ts-ignore
       newCategory = categories.find((category) => category.name === name);
     }
     onChange(newCategory);
@@ -675,7 +675,6 @@ export const EditItemView = () => {
               )}
             </Box>
             <Snackbar
-              width={1}
               anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
               open={formState.isDirty}
               message="Form has been edited"

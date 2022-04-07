@@ -7,9 +7,12 @@ import {
   CardHeader,
   CircularProgress,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
   Grid,
-  Grow,
   IconButton,
   InputLabel,
   LinearProgress,
@@ -26,17 +29,21 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { Controller, useForm } from "react-hook-form";
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDocs,
   query,
+  setDoc,
   where,
 } from "firebase/firestore";
 import { getDownloadURL, ref } from "firebase/storage";
 import { useAuthState } from "../../contexts/AuthContext";
 import {
+  useCollection,
   useCollectionData,
   useDocumentData,
 } from "react-firebase-hooks/firestore";
@@ -118,7 +125,7 @@ const placeholder = {
       id: "2",
       author: "Malek",
       date: new Date(),
-      rating: 3.5,
+      rating: 3,
       title: "I changed my mind, it kinda sucks...",
       text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus mauris libero, posuere eget nibh sit amet, feugiat cursus elit. Phasellus quis risus justo. Cras ut sapien at urna porttitor pulvinar. Fusce id magna pulvinar, pulvinar felis at, congue neque. Nunc id nisl faucibus dui maximus rutrum id convallis nibh. Sed id eros nec justo lobortis iaculis ac vitae nunc. Pellentesque blandit eros ipsum, sed dapibus magna molestie non. Donec imperdiet pharetra erat, in vestibulum elit pulvinar ut. Praesent nunc dui, convallis ut ullamcorper sit amet, consequat a lacus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras sodales lectus nec euismod tempor.",
     },
@@ -126,7 +133,7 @@ const placeholder = {
       id: "3",
       author: "Malek",
       date: new Date(),
-      rating: 4.5,
+      rating: 4,
       title: "Nvm, Hella Good!",
       text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus mauris libero, posuere eget nibh sit amet, feugiat cursus elit. Phasellus quis risus justo. Cras ut sapien at urna porttitor pulvinar. Fusce id magna pulvinar, pulvinar felis at, congue neque. Nunc id nisl faucibus dui maximus rutrum id convallis nibh. Sed id eros nec justo lobortis iaculis ac vitae nunc. Pellentesque blandit eros ipsum, sed dapibus magna molestie non. Donec imperdiet pharetra erat, in vestibulum elit pulvinar ut. Praesent nunc dui, convallis ut ullamcorper sit amet, consequat a lacus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras sodales lectus nec euismod tempor.",
     },
@@ -171,11 +178,175 @@ const QuestionComponent = (props) => {
   );
 };
 
+const ReviewDialog = ({
+  open,
+  initialData,
+  handleClose,
+  db,
+  itemId,
+  author,
+}) => {
+  const isNew = !initialData;
+  const { control, handleSubmit, reset } = useForm({
+    defaultValues: {
+      id: initialData?.id,
+      rating: initialData?.rating ?? 0,
+      title: initialData?.title ?? "",
+      text: initialData?.text ?? "",
+    },
+  });
+
+  React.useEffect(() => {
+    if (!initialData) {
+      reset({
+        id: undefined,
+        rating: 0,
+        title: "",
+        text: "",
+      });
+    } else {
+      reset({
+        id: initialData?.id,
+        rating: initialData?.rating ?? 0,
+        title: initialData?.title ?? "",
+        text: initialData?.text ?? "",
+      });
+    }
+  }, [initialData, reset]);
+
+  const onSubmit = (data) => {
+    const _data = {
+      itemId: itemId,
+      rating: data.rating,
+      title: data.title,
+      text: data.text,
+      author: author,
+      date: new Date(),
+    };
+    if (isNew) {
+      addDoc(collection(db, "reviews"), _data);
+      reset({
+        id: initialData?.id,
+        rating: initialData?.rating ?? 0,
+        title: initialData?.title ?? "",
+        text: initialData?.text ?? "",
+      });
+    } else {
+      setDoc(doc(db, "reviews", data.id), _data);
+    }
+    handleClose();
+  };
+
+  return (
+    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <DialogTitle>{(isNew ? "Add" : "Edit") + " Review"}</DialogTitle>
+        <DialogContent>
+          <Controller
+            name="rating"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <Rating
+                value={Number(value)}
+                onChange={(value) => onChange(value)}
+              />
+            )}
+          />
+          <Box mt={2}>
+            <Controller
+              name="title"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  label="Title"
+                  value={value}
+                  onChange={onChange}
+                />
+              )}
+            />
+          </Box>
+          <Box mt={2}>
+            <Controller
+              name="text"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <TextField
+                  fullWidth
+                  rows={4}
+                  variant="outlined"
+                  multiline
+                  label="Text"
+                  value={value}
+                  onChange={onChange}
+                />
+              )}
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              reset({
+                id: initialData?.id,
+                rating: initialData?.rating ?? 0,
+                title: initialData?.title ?? "",
+                text: initialData?.text ?? "",
+              });
+              handleClose();
+            }}
+          >
+            {"Cancel"}
+          </Button>
+          <Button type="submit">{"Submit"}</Button>
+        </DialogActions>
+      </form>
+    </Dialog>
+  );
+};
+
 export const ItemView = () => {
   const { itemId } = useParams();
-  const { user } = useAuthState();
+  const { user, isAuthenticated } = useAuthState();
   const { firestore: db, storage } = useFirebase();
+  const [reviewDialogData, setReviewDialogData] = React.useState(undefined);
+  const [ratingFilter, setRatingFilter] = React.useState("Highest Rating");
+  const [isReviewDialogOpen, setReviewDialogOpen] = React.useState(false);
+  const onReviewDialogClose = () => {
+    setReviewDialogOpen(false);
+  };
+
+  const sortReviewDocs = (a, b) => {
+    const _a = a.data();
+    const _b = b.data();
+    if (ratingFilter === "Highest Rating") {
+      if (_a.rating > _b.rating) return -1;
+      else if (_a.rating === _b.rating) return 0;
+      else return 1;
+    } else if (ratingFilter === "Lowest Rating") {
+      if (_a.rating > _b.rating) return 1;
+      else if (_a.rating === _b.rating) return 0;
+      else return -1;
+    } else if (ratingFilter === "Newest") {
+      if (_a.date.toDate() > _b.date.toDate()) return -1;
+      else if (_a.date.toDate() === _b.date.toDate()) return 0;
+      else return 1;
+    } else if (ratingFilter === "Oldest") {
+      if (_a.date.toDate() > _b.date.toDate()) return 1;
+      else if (_a.date.toDate() === _b.date.toDate()) return 0;
+      else return -1;
+    }
+  };
+
   const [item] = useDocumentData(doc(db, "items", itemId));
+  const [reviewSnapshot] = useCollection(
+    query(collection(db, "reviews"), where("itemId", "==", itemId))
+  );
+  const ratingsCount = [0, 0, 0, 0, 0];
+  reviewSnapshot?.docs.forEach((doc) => {
+    ratingsCount[doc.data().rating - 1]++;
+  });
   const [categoryFilters, setCategoryFilters] = React.useState([]);
   const [categoryFilterValues, setCategoryFilterValues] = React.useState([
     "None",
@@ -227,12 +398,12 @@ export const ItemView = () => {
     earliestDelivery.getDate() + Number(item?.orderProcessingDelay) ?? 0
   );
   let totalRatings = 0;
-  placeholder.ratingsCount.forEach((ratingCount) => {
+  ratingsCount.forEach((ratingCount) => {
     totalRatings += ratingCount;
   });
   let averageRating = 0;
-  placeholder.ratingsCount.forEach((ratingCount, i) => {
-    averageRating = (i + 1) * (ratingCount / totalRatings);
+  ratingsCount.forEach((ratingCount, i) => {
+    averageRating += (i + 1) * (ratingCount / totalRatings);
   });
   averageRating = Math.ceil(averageRating * 2) / 2;
   const addItemToCart = (_) => {
@@ -494,27 +665,31 @@ export const ItemView = () => {
             </Box>
           </Grid>
           <Grid item xs={6}>
-            <Typography variant="h5">
-              <b>{"Product Specifications"}</b>
-            </Typography>
-            <Box mt={3}>
-              <TableContainer component={Paper} variant="outlined">
-                <Table sx={{ minWidth: 1 }}>
-                  <TableBody>
-                    {item.productSpecifications.map(({ name, value }) => (
-                      <TableRow key={"specifications-table-row-" + name}>
-                        <TableCell>{name}</TableCell>
-                        <TableCell>{value}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Box>
+            {item.productSpecifications.length > 0 && (
+              <Box>
+                <Typography variant="h5">
+                  <b>{"Product Specifications"}</b>
+                </Typography>
+                <Box mt={3}>
+                  <TableContainer component={Paper} variant="outlined">
+                    <Table sx={{ minWidth: 1 }}>
+                      <TableBody>
+                        {item.productSpecifications.map(({ name, value }) => (
+                          <TableRow key={"specifications-table-row-" + name}>
+                            <TableCell>{name}</TableCell>
+                            <TableCell>{value}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Box>
+              </Box>
+            )}
           </Grid>
         </Grid>
       </Box>
-      <Box mt={3}>
+      {/* <Box mt={3}>
         <Divider light />
       </Box>
       <Box mt={3}>
@@ -532,7 +707,7 @@ export const ItemView = () => {
             question={question}
           />
         ))}
-      </Box>
+      </Box> */}
       <Box mt={3}>
         <Divider light />
       </Box>
@@ -552,11 +727,11 @@ export const ItemView = () => {
                 </Box>
               </Box>
               <Box mt={1}>
-                {placeholder.ratingsCount
+                {ratingsCount
                   .slice(0)
                   .reverse()
                   .map((ratingCount, _i) => {
-                    const i = placeholder.ratingsCount.length - _i;
+                    const i = ratingsCount.length - _i;
                     const value = Math.round(
                       (ratingCount / totalRatings) * 100
                     );
@@ -574,14 +749,14 @@ export const ItemView = () => {
                           <LinearProgress
                             sx={{ height: 8, borderRadius: 5 }}
                             variant="determinate"
-                            value={value}
+                            value={ratingCount === 0 ? 0 : value}
                           />
                         </Box>
                         <Box sx={{ minWidth: 35 }}>
                           <Typography
                             variant="body2"
                             color="text.secondary"
-                          >{`${value}%`}</Typography>
+                          >{`${ratingCount === 0 ? 0 : value}%`}</Typography>
                         </Box>
                       </Box>
                     );
@@ -592,39 +767,76 @@ export const ItemView = () => {
           <Grid item xs={8}>
             <Box display="flex" justifyContent="space-between">
               <Select
-                value={"Highest Rating"}
+                value={ratingFilter}
                 variant="standard"
                 renderValue={(value) => <Box pl={1}>{value}</Box>}
+                onChange={(event) => setRatingFilter(event.target.value)}
               >
                 <MenuItem value={"Highest Rating"}>{"Highest Rating"}</MenuItem>
                 <MenuItem value={"Lowest Rating"}>{"Lowest Rating"}</MenuItem>
                 <MenuItem value={"Newest"}>{"Newest"}</MenuItem>
                 <MenuItem value={"Oldest"}>{"Oldest"}</MenuItem>
               </Select>
-              <Button>
+              <Button
+                onClick={async () => {
+                  await setReviewDialogData(undefined);
+                  setReviewDialogOpen(true);
+                }}
+              >
                 <b>{"Add Customer Review"}</b>
               </Button>
             </Box>
             <Box pt={1}>
-              {placeholder.reviews.map((review) => {
+              {reviewSnapshot?.docs.sort(sortReviewDocs).map((_doc) => {
+                const review = _doc.data();
                 return (
-                  <Box mt={2} key={"review-" + review.id}>
+                  <Box mt={2} key={"review-" + _doc.id}>
                     <Card sx={{ width: 1 }} variant="outlined">
                       <CardHeader
-                        avatar={<Avatar>M</Avatar>}
+                        avatar={
+                          <Avatar>
+                            {review.author.charAt(0).toUpperCase()}
+                          </Avatar>
+                        }
                         title={"Reviewed by " + review.author}
-                        subheader={review.date.toLocaleDateString("en-US", {
-                          weekday: "long",
-                          month: "long",
-                          day: "numeric",
-                          year: "numeric",
-                        })}
+                        subheader={review.date
+                          .toDate()
+                          .toLocaleDateString("en-US", {
+                            weekday: "long",
+                            month: "long",
+                            day: "numeric",
+                            year: "numeric",
+                          })}
                         action={
                           <Box display="flex">
-                            <IconButton disabled color="primary">
+                            <IconButton
+                              disabled={user.displayName !== review.author}
+                              color="primary"
+                              onClick={async () => {
+                                await setReviewDialogData({
+                                  id: _doc.id,
+                                  rating: review.rating,
+                                  title: review.title,
+                                  text: review.text,
+                                });
+                                setReviewDialogOpen(true);
+                              }}
+                            >
                               <EditIcon />
                             </IconButton>
-                            <IconButton disabled color="error">
+                            <IconButton
+                              disabled={user.displayName !== review.author}
+                              color="error"
+                              onClick={(event) => {
+                                if (
+                                  confirm(
+                                    "Are you sure you want to delete this review?"
+                                  )
+                                ) {
+                                  deleteDoc(doc(db, "reviews", _doc.id));
+                                }
+                              }}
+                            >
                               <DeleteIcon />
                             </IconButton>
                           </Box>
@@ -655,6 +867,14 @@ export const ItemView = () => {
           </Grid>
         </Grid>
       </Box>
+      <ReviewDialog
+        initialData={reviewDialogData}
+        open={isReviewDialogOpen}
+        handleClose={onReviewDialogClose}
+        db={db}
+        itemId={itemId}
+        author={user.displayName}
+      />
     </Container>
   ) : (
     <Container maxWidth="xl">
