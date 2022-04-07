@@ -13,7 +13,6 @@ import React from "react";
 // query for the user ID that is currently logged in
 
 export function AddressForm(props) {
-  console.log(props);
   const {
     formField: {
       first,

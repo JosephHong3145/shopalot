@@ -61,7 +61,6 @@ export function PaymentView(props) {
   const { shipping } = formValues;
   const { firestore: db } = useFirebase();
   const { user } = useAuthState();
-  console.log(user.uid);
   const [billingSnapshot, billingLoading] = useCollection(
     query(collection(db, "billing"), where("userId", "==", user.uid))
   );
@@ -74,8 +73,6 @@ export function PaymentView(props) {
   const shippingData = shippingSnapshot
     ? shippingSnapshot?.docs[0].data()
     : undefined;
-  console.log(billingData);
-  console.log(shippingData);
   const [value] = useCollection(
     query(collection(db, "cart"), where("userId", "==", user.uid))
   );
@@ -152,7 +149,7 @@ export function PaymentView(props) {
       postal: values.postal,
       phone: values.phone,
     };
-    console.log(values.useSameAddress);
+
     const _billingData = {
       userId: user.uid,
       first: values.cardHolderFirst,
@@ -170,9 +167,6 @@ export function PaymentView(props) {
       postal: values.useSameAddress ? values.postal : values.billingPostal,
     };
     const uuid = uuidv4();
-    console.log(_order);
-    console.log(_shippingData);
-    console.log(_billingData);
     await addDoc(collection(db, "orders"), _order);
     await setDoc(
       doc(db, "shipping", shippingSnapshot.docs[0].id),

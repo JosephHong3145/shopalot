@@ -17,7 +17,6 @@ const getDeliveryTime = (deliveryOption) => {
 
 export function AddressInfo(props) {
   const { orderProcessingDelay } = props;
-  console.log(">>> " + orderProcessingDelay);
   const { formValues = "empty" } = props || {};
   const classes = useStyle();
   const {

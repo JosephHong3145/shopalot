@@ -33,7 +33,6 @@ export function PricingInfo(props) {
   const { formValues = "empty" } = props || {};
   const { shipping } = formValues;
   const total = (getDeliveryPrice(shipping) + Number(cartCost)) * 1.15;
-  console.log(total);
 
   return (
     <Box sx={{ height: 300 }}>
