@@ -20,8 +20,8 @@ export const AboutUs = () => {
         <Typography >
           <b>
             Shopalot is a website for buying and selling a variety of things
-            while making a contribution to Concordia Universiy. Originally taught
-            up as a school project with the name camelot, we now ship to people around the world. 
+            while making a contribution to Concordia University. Originally taught
+            up as a school project with the name Camelot, we now ship to people around the world. 
             This website is created and maintained by  Jeff Zhang , Alexandra Zana , Ali Alp Erdinc, 
             Eve Gagnon, Ru Joseph Hong , Abdelmalek Ihdene , Armita Zand and Ayman Mansoor.{" "}
           </b>
@@ -58,7 +58,7 @@ export const AboutUs = () => {
                </Grid>
                </Box>
                <Typography >
-               <b>If you have any questions, compaints or bug you want to tell us about please send them to our support email: SupportShopalot@gmail.com We hope youYou enjoyed your shopping experience. </b>
+               <b>If you have any questions, complaints or bugs you want to tell us about please send them to our support email: SupportShopalot@gmail.com We hope you enjoyed your shopping experience. </b>
                </Typography>
 
 
