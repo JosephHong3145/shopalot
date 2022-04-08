@@ -19,6 +19,10 @@ const {
   },
 } = addressPaymentForm;
 
+export const checkIfCardValid = (cardNumber) => {
+  return cardRegex.test(cardNumber);
+};
+
 const cardRegex = /^(?:4[0-9]{12}(?:[0-9]{3})?)$/;
 
 export default [

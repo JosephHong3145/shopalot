@@ -107,6 +107,19 @@ export const FilterList = (props) => {
   );
 };
 
+export const getEnabledFilters = (
+  filtersEnabled,
+  filtersNames,
+  filtersOptions
+) => {
+  return filtersEnabled
+    .map(
+      (enabled, i) =>
+        enabled && { name: filtersNames[i], options: filtersOptions[i] }
+    )
+    .filter((x) => typeof x !== "boolean");
+};
+
 export const AddCategoryDialog = (props) => {
   const { open, onClose, onAddCategory } = props;
   const [categoryName, setCategoryName] = React.useState("");
@@ -115,12 +128,7 @@ export const AddCategoryDialog = (props) => {
   const [filtersOptions, setFiltersOptions] = React.useState([[], []]);
   const category = {
     name: categoryName,
-    filters: filtersEnabled
-      .map(
-        (enabled, i) =>
-          enabled && { name: filtersNames[i], options: filtersOptions[i] }
-      )
-      .filter((x) => typeof x !== "boolean"),
+    filters: getEnabledFilters(filtersEnabled, filtersNames, filtersOptions),
   };
   return (
     <Dialog open={open} onClose={onClose}>
@@ -202,10 +210,14 @@ export const AddCategoryDialog = (props) => {
   );
 };
 
-export const CombinationList = ({ filters, value: combinations, onChange }) => {
-  const filterCombinations = filters[0].options
+export const getFilterCombinations = (filters) => {
+  return filters[0].options
     .map((x) => filters[1]?.options.map((y) => [x, y]) || [[x]])
     .flat();
+};
+
+export const CombinationList = ({ filters, value: combinations, onChange }) => {
+  const filterCombinations = getFilterCombinations(filters);
   return (
     <Paper variant="outlined">
       {filterCombinations.map((filterCombination) => {

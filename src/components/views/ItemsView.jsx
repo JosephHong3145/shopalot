@@ -53,28 +53,6 @@ export const ItemsView = () => {
       }
     }
   }, [snapshot, query]);
-  // const items = [
-  //   <Item
-  //     key={"item1"}
-  //     title={"Adidas Grand Court Sneakers"}
-  //     price={"$53.00 CAD"}
-  //     description={"Leather and Synthetic"}
-  //     image={
-  //       "https://di2ponv0v5otw.cloudfront.net/posts/2018/07/10/5b45a8162140f3f8d4b2e9b2/m_5b45a818534ef923d7f95f2c.jpeg"
-  //     }
-  //     alt={""}
-  //   />,
-  //   <Item
-  //     key={"item2"}
-  //     title={"Samsung TV"}
-  //     price={"$600.00 CAD"}
-  //     description={"58 inch crystal UHD display"}
-  //     image={
-  //       "https://images.samsung.com/is/image/samsung/latin-en-uhd-tu8000-un58tu8000pxpa-frontblack-286008980?$720_576_PNG$"
-  //     }
-  //     alt={"this image alt"}
-  //   />,
-  // ]; // import component you created instead and pass props created in the other const(price, itemname..)
   return (
     <Container maxWidth="xl">
       <Box mt={3}>
