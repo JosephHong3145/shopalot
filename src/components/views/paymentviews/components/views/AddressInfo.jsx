@@ -2,7 +2,7 @@ import { Box, Paper, Typography } from "@mui/material";
 import { useStyle } from "../Style";
 import React from "react";
 
-const getDeliveryTime = (deliveryOption) => {
+export const getDeliveryTime = (deliveryOption) => {
   switch (deliveryOption) {
     case 0:
       return 0;

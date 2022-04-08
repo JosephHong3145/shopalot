@@ -56,90 +56,6 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import LockIcon from "@mui/icons-material/Lock";
 import React from "react";
 
-const placeholder = {
-  // imageURL:
-  //   "https://di2ponv0v5otw.cloudfront.net/posts/2018/07/10/5b45a8162140f3f8d4b2e9b2/m_5b45a818534ef923d7f95f2c.jpeg",
-  itemName: "Adidas Grand Court Sneakers",
-  seller: "Malek",
-  ratingsCount: [1, 5, 3, 13, 73],
-  category: "Men's Shoes",
-  price: "$53.00 CAD",
-  sizeOptions: ["7", "8", "9", "10", "11", "12"],
-  colorOptions: ["Green", "Blue", "Black", "Yellow"],
-  stock: 3,
-  sellerLocation: "Montreal, Quebec",
-  refundPolicy: "30 days refund",
-  orderProcessingDelay: 3,
-  condition: "Mint / Unopened",
-  productDescription: `
-  • Leather and Synthetic\n
-  • Rubber sole\n
-  • Shaft measures approximately low-top from arch\n
-  • Platform measures approximately 1 inches\n
-  • A '70s style Reborn\n
-  • These shoes take inspiration from iconic sport styles of the past and move them into the future\n
-  • The shoes craft an everyday look with a smooth leather upper\n
-  • Signature 3-stripes flash along the sides\n
-  • Plush midsole cushioning gives comfort to every step
-  `,
-  productSpecifications: [
-    { name: "Model", value: "A515-56-58K6" },
-    { name: "Operating System", value: "Windows 10 Home" },
-    { name: "Processor Speed", value: "2.40 GHz" },
-    { name: "Storage Type", value: "SSD (Solid State Drive}" },
-    { name: "Brand", value: "Acer" },
-  ],
-  questions: [
-    {
-      id: "1",
-      text: "Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo?",
-      answer:
-        "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium",
-      upvotes: 0,
-    },
-    {
-      id: "2",
-      text: "Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo?",
-      answer:
-        "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium",
-      upvotes: -3,
-    },
-    {
-      id: "3",
-      text: "Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo?",
-      answer:
-        "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium",
-      upvotes: 5,
-    },
-  ],
-  reviews: [
-    {
-      id: "1",
-      author: "Malek",
-      date: new Date(),
-      rating: 4,
-      title: "Great product! Would recommend to everyone!",
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus mauris libero, posuere eget nibh sit amet, feugiat cursus elit. Phasellus quis risus justo. Cras ut sapien at urna porttitor pulvinar. Fusce id magna pulvinar, pulvinar felis at, congue neque. Nunc id nisl faucibus dui maximus rutrum id convallis nibh. Sed id eros nec justo lobortis iaculis ac vitae nunc. Pellentesque blandit eros ipsum, sed dapibus magna molestie non. Donec imperdiet pharetra erat, in vestibulum elit pulvinar ut. Praesent nunc dui, convallis ut ullamcorper sit amet, consequat a lacus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras sodales lectus nec euismod tempor.",
-    },
-    {
-      id: "2",
-      author: "Malek",
-      date: new Date(),
-      rating: 3,
-      title: "I changed my mind, it kinda sucks...",
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus mauris libero, posuere eget nibh sit amet, feugiat cursus elit. Phasellus quis risus justo. Cras ut sapien at urna porttitor pulvinar. Fusce id magna pulvinar, pulvinar felis at, congue neque. Nunc id nisl faucibus dui maximus rutrum id convallis nibh. Sed id eros nec justo lobortis iaculis ac vitae nunc. Pellentesque blandit eros ipsum, sed dapibus magna molestie non. Donec imperdiet pharetra erat, in vestibulum elit pulvinar ut. Praesent nunc dui, convallis ut ullamcorper sit amet, consequat a lacus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras sodales lectus nec euismod tempor.",
-    },
-    {
-      id: "3",
-      author: "Malek",
-      date: new Date(),
-      rating: 4,
-      title: "Nvm, Hella Good!",
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus mauris libero, posuere eget nibh sit amet, feugiat cursus elit. Phasellus quis risus justo. Cras ut sapien at urna porttitor pulvinar. Fusce id magna pulvinar, pulvinar felis at, congue neque. Nunc id nisl faucibus dui maximus rutrum id convallis nibh. Sed id eros nec justo lobortis iaculis ac vitae nunc. Pellentesque blandit eros ipsum, sed dapibus magna molestie non. Donec imperdiet pharetra erat, in vestibulum elit pulvinar ut. Praesent nunc dui, convallis ut ullamcorper sit amet, consequat a lacus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras sodales lectus nec euismod tempor.",
-    },
-  ],
-};
-
 const QuestionComponent = (props) => {
   const { question } = props;
   const { text, answer, upvotes } = question;
@@ -306,6 +222,52 @@ const ReviewDialog = ({
   );
 };
 
+export const getAverageRating = (ratingsCount, totalRatings) => {
+  let averageRating = 0;
+  ratingsCount.forEach((ratingCount, i) => {
+    averageRating += (i + 1) * (ratingCount / totalRatings);
+  });
+  averageRating = Math.ceil(averageRating * 2) / 2;
+  return averageRating;
+};
+
+export const getFormattedDateWithYear = (date) => {
+  return date.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+};
+
+export const sortDocument = (ratingFilter, _a, _b) => {
+  if (ratingFilter === "Highest Rating") {
+    if (_a.rating > _b.rating) return -1;
+    else if (_a.rating === _b.rating) return 0;
+    else return 1;
+  } else if (ratingFilter === "Lowest Rating") {
+    if (_a.rating > _b.rating) return 1;
+    else if (_a.rating === _b.rating) return 0;
+    else return -1;
+  } else if (ratingFilter === "Newest") {
+    if (_a.date.toDate() > _b.date.toDate()) return -1;
+    else if (_a.date.toDate() === _b.date.toDate()) return 0;
+    else return 1;
+  } else if (ratingFilter === "Oldest") {
+    if (_a.date.toDate() > _b.date.toDate()) return 1;
+    else if (_a.date.toDate() === _b.date.toDate()) return 0;
+    else return -1;
+  }
+};
+
+export const formatEarliestDelivery = (earliestDelivery) => {
+  return earliestDelivery.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  });
+};
+
 export const ItemView = () => {
   const { itemId } = useParams();
   const { user, isAuthenticated } = useAuthState();
@@ -320,23 +282,7 @@ export const ItemView = () => {
   const sortReviewDocs = (a, b) => {
     const _a = a.data();
     const _b = b.data();
-    if (ratingFilter === "Highest Rating") {
-      if (_a.rating > _b.rating) return -1;
-      else if (_a.rating === _b.rating) return 0;
-      else return 1;
-    } else if (ratingFilter === "Lowest Rating") {
-      if (_a.rating > _b.rating) return 1;
-      else if (_a.rating === _b.rating) return 0;
-      else return -1;
-    } else if (ratingFilter === "Newest") {
-      if (_a.date.toDate() > _b.date.toDate()) return -1;
-      else if (_a.date.toDate() === _b.date.toDate()) return 0;
-      else return 1;
-    } else if (ratingFilter === "Oldest") {
-      if (_a.date.toDate() > _b.date.toDate()) return 1;
-      else if (_a.date.toDate() === _b.date.toDate()) return 0;
-      else return -1;
-    }
+    return sortDocument(ratingFilter, _a, _b);
   };
 
   const [item] = useDocumentData(doc(db, "items", itemId));
@@ -401,11 +347,7 @@ export const ItemView = () => {
   ratingsCount.forEach((ratingCount) => {
     totalRatings += ratingCount;
   });
-  let averageRating = 0;
-  ratingsCount.forEach((ratingCount, i) => {
-    averageRating += (i + 1) * (ratingCount / totalRatings);
-  });
-  averageRating = Math.ceil(averageRating * 2) / 2;
+  const averageRating = getAverageRating(ratingsCount, totalRatings);
   const addItemToCart = (_) => {
     const _item = {
       filters: categoryFilters.map((filter, i) => ({
@@ -568,11 +510,7 @@ export const ItemView = () => {
                   </Typography> */}
                   <Typography variant="subtitle2">
                     <b>{"Earliest Delivery: "}</b>
-                    {earliestDelivery.toLocaleDateString("en-US", {
-                      weekday: "long",
-                      month: "long",
-                      day: "numeric",
-                    })}
+                    {formatEarliestDelivery(earliestDelivery)}
                   </Typography>
                   <Typography variant="subtitle2">
                     <b>{"Refund Policy: "}</b>
@@ -799,14 +737,9 @@ export const ItemView = () => {
                           </Avatar>
                         }
                         title={"Reviewed by " + review.author}
-                        subheader={review.date
-                          .toDate()
-                          .toLocaleDateString("en-US", {
-                            weekday: "long",
-                            month: "long",
-                            day: "numeric",
-                            year: "numeric",
-                          })}
+                        subheader={getFormattedDateWithYear(
+                          review.date.toDate()
+                        )}
                         action={
                           <Box display="flex">
                             <IconButton

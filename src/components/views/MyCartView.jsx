@@ -192,6 +192,16 @@ export const ItemComponent = (props) => {
   );
 };
 
+export const getItemsPrice = (items) => {
+  return items
+    .reduce(
+      (partialSum, item) =>
+        partialSum + Number(item.price) * Number(item.quantity),
+      0
+    )
+    .toFixed(2);
+};
+
 export const MyCartView = () => {
   const { firestore: db, storage } = useFirebase();
   const { user } = useAuthState();
@@ -234,14 +244,7 @@ export const MyCartView = () => {
                     {"Subtotal (" +
                       items.length +
                       " items): $" +
-                      items
-                        .reduce(
-                          (partialSum, item) =>
-                            partialSum +
-                            Number(item.price) * Number(item.quantity),
-                          0
-                        )
-                        .toFixed(2)}
+                      getItemsPrice(items)}
                   </Typography>
                 </Box>
                 <Link to="/payment" style={{ textDecoration: "none" }}>

@@ -57,6 +57,14 @@ function stepContent(step, cartItems, cartCost, orderProcessingDelay) {
   }
 }
 
+export const getOrderProcessingDelay = (items) => {
+  return items.reduce((p, v) => {
+    return p > Number(v.itemProcessingDelay)
+      ? p
+      : Number(v.itemProcessingDelay);
+  }, 0);
+};
+
 export function PaymentView(props) {
   const { formValues = "empty" } = props || {};
   const { shipping } = formValues;
@@ -88,11 +96,7 @@ export function PaymentView(props) {
       0
     )
     .toFixed(2);
-  const orderProcessingDelay = _items.reduce((p, v) => {
-    return p > Number(v.itemProcessingDelay)
-      ? p
-      : Number(v.itemProcessingDelay);
-  }, 0);
+  const orderProcessingDelay = getOrderProcessingDelay(_items);
 
   const getDeliveryTime = (deliveryOption) => {
     switch (deliveryOption) {
